@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: 'Roboto Light';
+    src: url('/fonts/Roboto-Light.ttf') format('truetype');
+  }
+.chiUwu{
+    border: 1px rgb(222, 213, 213) solid;
+}
+.imgCarru{
+    object-fit: cover;
+}
+
+.ant-table-thead > tr > th {
+  background-color: #5d7987 !important;
+  overflow-wrap: break-word;
+  color: white !important;
+  font-weight: bold !important;
+}
+
+.ant-table-tbody > tr > td {
+    overflow-wrap: break-word;
+  }
+    

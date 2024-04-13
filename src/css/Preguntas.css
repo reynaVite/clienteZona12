@@ -1,0 +1,7 @@
+.contenedor-preguntas{
+    background-color: aqua;
+    max-width: 90%;
+    display: flex;
+    justify-content: center;
+
+}

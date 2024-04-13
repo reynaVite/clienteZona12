@@ -1,0 +1,17 @@
+.conTit{
+    font-size: 25px;
+    font-weight: 700;
+    text-align: center;
+}
+.titulo{
+    margin-top: 3rem ;
+    margin-bottom: 3rem;
+}
+.subtitulo{
+    font-size: 25px;
+    color: black;
+}
+.subtitulo ss{
+    padding: 28px;
+    text-decoration: underline;
+}

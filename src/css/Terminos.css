@@ -1,0 +1,13 @@
+
+.containerrr {
+    margin: 0 auto;
+    padding: 20px; 
+    text-align: left;
+    font-size: 20px;
+    text-wrap: balance;
+  
+    @media (max-width: 768px) {
+      max-width: 90%;
+      padding: 10px;
+    }
+  }
