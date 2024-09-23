@@ -51,18 +51,22 @@ export function Examen() {
       message.error('Por favor, proporciona una descripción.');
       return;
     }
-
+  
     const formData = new FormData();
     formData.append('file', fileList[0].originFileObj);
     formData.append('opcion', opcionSeleccionada);
-    formData.append('descripcion', descripcion); // Añadir la descripción al FormData
-
+    formData.append('descripcion', descripcion);
+    
+    // Agregar CURP al FormData
+    const userCURP = localStorage.getItem("userCURP") || "";
+    formData.append('curp', userCURP);
+  
     try {
       const response = await fetch("http://localhost:3000/submitExamen", {
         method: 'POST',
         body: formData
       });
-
+  
       if (response.ok) {
         message.success('Examen enviado exitosamente.');
         setFileList([]);
@@ -76,7 +80,7 @@ export function Examen() {
       message.error('Error al enviar el examen.');
     }
   };
-
+  
   return (
     <>
       <Affix><Header /></Affix>
