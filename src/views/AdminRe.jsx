@@ -1,11 +1,11 @@
 import "../css/Login.css";
 import React, { useEffect, useState } from "react";
-import { Form, Table, Select, message, Spin, Progress, Button, Row, Col, Card, Modal, Pagination } from 'antd';
+import { Form, Table, Select, message, Spin, Progress, Button, Row, Col, Card, Modal, Pagination, Input } from 'antd';
 import { ExclamationCircleOutlined, DownOutlined, UpOutlined } from '@ant-design/icons';
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ScrollToTop } from "../components/ScrollToTop";
-import { Subtitulo,Titulo } from "../components/Titulos";
+import { Subtitulo, Titulo } from "../components/Titulos";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CSPMetaTag } from "../components/CSPMetaTag";
@@ -19,12 +19,13 @@ export function AdminRe() {
     const [expandedRecords, setExpandedRecords] = useState({});
     const [paginaActual, setPaginaActual] = useState(1);
     const [modalVisible, setModalVisible] = useState(false);
+    const [busqueda, setBusqueda] = useState("");
 
     const registrosPorPagina = 9;
 
     useEffect(() => {
         obtenerRegistros();
-    }, [paginaActual]);
+    }, [paginaActual, busqueda]);
 
     const openModal = () => {
         setModalVisible(true);
@@ -34,7 +35,6 @@ export function AdminRe() {
         setModalVisible(false);
     };
 
- 
     const handleDarBaja = async (record) => {
         confirm({
             title: '¿Estás seguro de dar de baja esta cuenta?',
@@ -44,42 +44,31 @@ export function AdminRe() {
             okButtonProps: { style: { color: 'black' } },
             async onOk() {
                 try {
-                    // Realizar la solicitud para dar de baja la cuenta
                     const respuesta = await axios.get(`http://localhost:3000/registroBaja?curp=${record.curp}`);
-                    // Verificar si la cuenta fue dada de baja correctamente
                     const datos = respuesta.data;
                     if (datos.success) {
-                        // Si la cuenta fue dada de baja correctamente, eliminar la asignación del docente
                         const response = await axios.post("http://localhost:3000/borrar_asignacionAdmin", {
                             curp: record.curp
                         });
-                        // Verificar si la asignación del docente fue eliminada correctamente
                         if (response.data.success) {
-                            // Si la asignación del docente fue eliminada correctamente, mostrar un mensaje de éxito
                             message.success("La cuenta ha sido dada de baja.");
-                            // Volver a cargar los registros
                             obtenerRegistros();
                         } else {
-                            // Si hubo un error al eliminar la asignación del docente, mostrar un mensaje de error
                             message.error("Error al eliminar la asignación del docente.");
                         }
                     } else {
-                        // Si hubo un error al dar de baja la cuenta, mostrar un mensaje de error
                         message.error("Error al dar de baja la cuenta.");
                     }
                 } catch (error) {
-                    // Si hubo un error en la solicitud, mostrar un mensaje de error
                     message.error("Error al dar de baja la cuenta");
                 }
             },
             onCancel() {
                 console.log('Cancel');
             },
-            content:"Recuerda que se borrará la asignación si el usuario es maestro. Asegúrate de asignarle el grupo y grado del usuario a otro maestro después."
+            content: "Recuerda que se borrará la asignación si el usuario es maestro. Asegúrate de asignarle el grupo y grado del usuario a otro maestro después."
         });
-        
     };
-    
 
     const handleReactivar = async (record) => {
         confirm({
@@ -93,7 +82,6 @@ export function AdminRe() {
                     const respuesta = await axios.get(`http://localhost:3000/registroActivar?curp=${record.curp}`);
                     const datos = respuesta.data;
                     message.success("Cuenta reactivada exitosamente.");
-    
                     obtenerRegistros();
                 } catch (error) {
                     message.error("Error al reactivar la cuenta");
@@ -105,16 +93,14 @@ export function AdminRe() {
             content: "Recuerda que se debe volver a asignar un grupo y grado si el usuario es un maestro."
         });
     };
-    
-    
-    
 
     const obtenerRegistros = async () => {
         try {
             const response = await axios.get("http://localhost:3000/registrosB", {
                 params: {
                     pagina: paginaActual,
-                    registrosPorPagina: registrosPorPagina
+                    registrosPorPagina: registrosPorPagina,
+                    busqueda: busqueda // Enviar texto de búsqueda al servidor
                 }
             });
             setRegistros(response.data);
@@ -123,7 +109,7 @@ export function AdminRe() {
             message.error("Error al obtener registros");
         }
     };
-
+    
     const toggleRecordExpansion = (recordCurp) => {
         setExpandedRecords(prevState => ({
             ...prevState,
@@ -135,6 +121,13 @@ export function AdminRe() {
         setPaginaActual(pageNumber);
     };
 
+    const handleBusquedaChange = (e) => {
+        setBusqueda(e.target.value);
+    };
+   
+    const handleBuscar = () => {
+        obtenerRegistros();
+    };
     return (
         <>
             <CSPMetaTag />
@@ -142,8 +135,15 @@ export function AdminRe() {
             <div className="boxAdmin">
                 <ScrollToTop />
                 
-      <Titulo tit={"Usuarios de la zona 012"} /> 
-                <br></br>
+                <Titulo tit={"Usuarios de la zona 012"} /> 
+                <br />
+                <input
+            type="text"
+            value={busqueda}
+            onChange={handleBusquedaChange}
+            placeholder="Buscar por plantel"
+        />
+        <Button onClick={handleBuscar}>Buscar</Button> <br></br><br></br>
                 {loading ? (
                     <Spin size="large" />
                 ) : (
@@ -168,8 +168,6 @@ export function AdminRe() {
                                             <div><strong>Inicio de sesión:</strong> {new Date(registro.fecha_inicio_sesion).toLocaleString()}</div>
                                             <div><strong>Cuenta:</strong> {registro.estado_cuenta}</div>
                                             <div><strong>Usuario:</strong> {registro.estado_usuario}</div>
-
-
                                         </>
                                     )}
                                     {registro.estado_usuario === 'Baja' ? (
@@ -194,7 +192,8 @@ export function AdminRe() {
                         current={paginaActual}
                         onChange={handlePaginationChange}
                     />
-                </div><br></br>
+                </div>
+                <br />
             </div>
             <Footer />
             <Modal

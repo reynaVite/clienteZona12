@@ -17,8 +17,7 @@ import {
 } from "react-router-dom";
 import { Login } from "./views/Login";
 import { Salud } from "./views/Salud";
-import { Preguntas } from "./views/Preguntas";
-import { Escoger } from "./views/Escogerexa";
+import { Preguntas } from "./views/Preguntas"; 
 import { Historial } from "./views/Historial";
 import { ModA } from "./views/Modalumnos";
 import { ReContraseña } from "./views/ReContraseña";
@@ -35,12 +34,24 @@ import { AsigGrupo } from "./views/AsigGrupo";
 import { Asignados } from "./views/Asignados";
 import{SaludDatos} from "./views/SaludDatos";
 import{ReSalud} from "./views/ReSalud";
-
 import ProtectedRoute from "./PreotectedRote";
-
 import Unauthorized from "./views/Unauthorized"; 
-
+import{Evidencias} from "./views/Evidencias";
+import{Agenda} from "./views/Agenda";
+import {Examen } from "./views/Examen"; 
  
+import { CambiosEvidencia } from "./views/CambiosEvidencia";
+import { RezagoAcademico } from "./views/RezagoAcademico";
+import { ModificarEliminarRegistros } from "./views/CambiosRezago";
+
+import { Entregados } from "./views/Entregados";
+import ReRezago from "./views/ReRezago";
+
+
+import Comments from "./views/examenesForo/examenesScreen";
+import ExamCatalog from "./views/examenesForo/ExamenCatalog";
+
+
 // Componente ScrollToTop
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -92,11 +103,7 @@ const router = createBrowserRouter([
   {
     path: "/Preguntas",
     element: <Preguntas />, //falta
-  },
-  {
-    path: "/esExamen",
-    element: <Escoger />, //falta
-  },
+  } ,
   {
     path: "/Historial",
     element: <Historial />, //falta
@@ -186,6 +193,51 @@ const router = createBrowserRouter([
     path: "/unauthorized",
     element: <Unauthorized />,
   },
+  {
+    path: "/Evidencias",
+    element: <Evidencias />,
+     
+  },
+  {
+    path: "/Agenda",
+    element: <Agenda />,
+     
+  },
+  {
+    path: "/Examen",
+    element: <Examen />,
+     
+  }, {
+    path: "/CambiosEvidencia",
+    element: <CambiosEvidencia />,
+     
+  },
+  {
+    path: "/RezagoAcademico",
+    element: <RezagoAcademico />,
+  },
+  {
+    path: "/CambiosRezago",
+    element: <ModificarEliminarRegistros />,
+  },
+  {
+    path: "/Entregados",
+    element: <Entregados />,
+  },
+  {
+    path: "/Pilin",
+    element: <ReRezago />,
+  },
+  {
+    path: "/ExamenesPrueba/:id",
+    element: <Comments />,
+  },
+  {
+    path: "/ExamenesPrueba",
+    element: <ExamCatalog />,
+  },
+   
+   
    
 ]);
 

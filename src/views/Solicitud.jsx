@@ -1,36 +1,43 @@
 import "../css/Login.css";
-import AES from "crypto-js/aes";
-import Utf8 from "crypto-js/enc-utf8";
-import { Link } from "react-router-dom";
-import { Form, Input, Button, Select, message, Checkbox, Progress } from "antd";
+import { Form, Input, Button, Select, message } from "antd";
 import React, { useEffect, useState } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ScrollToTop } from "../components/ScrollToTop";
-import {
-  UserOutlined,
-  LockOutlined,
-  CheckCircleOutlined,
-  PhoneOutlined,
-  IdcardOutlined,
-} from "@ant-design/icons";
-import { Subtitulo, Notificacion, Contenido } from "../components/Titulos";
+import { UserOutlined, CheckCircleOutlined, IdcardOutlined } from "@ant-design/icons";
+import { Notificacion, Contenido } from "../components/Titulos";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CSPMetaTag } from "../components/CSPMetaTag";
-import CryptoJS from "crypto-js";
-
 const { Option } = Select;
 
 export function Solicitud() {
   const [plantelOptions, setPlantelOptions] = useState([]);
   const [sesionOptions, setSesionOptions] = useState([]);
-  const [preguntasSecretasOptions, setPreguntasSecretasOptions] = useState([]);
-  const [contrasenaFortaleza, setContrasenaFortaleza] = useState(0);
-  const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState({});
   const handleFormValuesChange = (changedValues, allValues) => {
     setFormValues(allValues);
+  };
+  const [form] = Form.useForm();
+  const navigate = useNavigate();
+
+  const verificarCorreo = async (correo) => {
+    try {
+      const respuesta = await axios.get('https://api.hunter.io/v2/email-verifier', {
+        params: {
+          email: correo,
+          api_key: '24c1faf657661ce9fff92b3d7edbbf4e598f5014',
+        },
+      });
+      // Revisar el estado del correo
+      if (respuesta.data.data.status === 'valid') {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      return false;
+    }
   };
 
   const obtenerValoresPlantel = async () => {
@@ -41,6 +48,7 @@ export function Solicitud() {
       console.error("Error al obtener valores del plantel:", error);
     }
   };
+
   const obtenerValoresSesion = async () => {
     try {
       const response = await axios.get("http://localhost:3000/sesiones");
@@ -50,30 +58,9 @@ export function Solicitud() {
     }
   };
 
-  const obtenerValoresPreguntasSecretas = async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:3000/preguntas-secretas"
-      );
-
-      setPreguntasSecretasOptions(response.data);
-    } catch (error) {
-      console.error("Error al obtener valores de preguntas secretas:", error);
-    }
-  };
-
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-  const [passwordMatch, setPasswordMatch] = useState(true);
-  const [passwordsMatchMessage, setPasswordsMatchMessage] = useState("");
   useEffect(() => {
     obtenerValoresPlantel();
-  }, []);
-  useEffect(() => {
     obtenerValoresSesion();
-  }, []);
-  useEffect(() => {
-    obtenerValoresPreguntasSecretas();
   }, []);
 
   const onFinish = async (values) => {
@@ -87,6 +74,11 @@ export function Solicitud() {
         aMaterno: values.aMaterno,
         correo: values.correo,
       };
+      const correoEsValido = await verificarCorreo(values.correo);
+      if (!correoEsValido) {
+        message.error("El correo ingresado no parece ser válido.");
+        return;
+      }
 
       // Verificar si la CURP ya existe en la base de datos (primera verificación)
       const curpExistsInSoli = await axios.post(
@@ -111,7 +103,6 @@ export function Solicitud() {
         "http://localhost:3000/verificar-correoSoli",
         { correo: values.correo }
       );
-
       if (curpExistsInSoli.data.exists) {
         // Mostrar mensaje de error si la CURP ya existe en la solicitud
         message.error("La CURP ya está asociada a una solicitud existente.");
@@ -136,7 +127,6 @@ export function Solicitud() {
         navigate("/");
       }
     } catch (error) {
-      console.error("Error al insertar datos en la base de datos:", error);
       message.error(
         "Error al mandar la solicitud. Por favor, inténtalo de nuevo."
       );
@@ -152,13 +142,12 @@ export function Solicitud() {
   return (
     <>
       <CSPMetaTag />
-
       <Header />
       <div className=" lg:w-10/12 lg:m-auto">
         <ScrollToTop />
         <div className="mt-5">
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-center">
-            Registro
+            Pre registro
           </h2>
           <Form
             name="loginForm"
@@ -167,10 +156,7 @@ export function Solicitud() {
             initialValues={{ remember: true }}
             onFinish={onFinish}
             onFinishFailed={onFinishFailed}
-            onValuesChange={handleFormValuesChange}
-          >
-            {/* AQUI EMPIEZA TODO EL DESMADRE*/}
-
+            onValuesChange={handleFormValuesChange}>
             <div className="">
               <Contenido conTit={"*CURP:"} />
               <Form.Item
@@ -248,7 +234,7 @@ export function Solicitud() {
                   />
                 </Form.Item>
 
-                {/* APELLIDOS Y ASI*/}
+
 
                 <div className="flex flex-row gap-x-5">
                   <div className="basis-1/2">
@@ -364,7 +350,7 @@ export function Solicitud() {
                   ))}
                 </Select>
               </Form.Item>
-              <Contenido conTit={"Tipo de Sesion"} />
+              <Contenido conTit={"Tipo de Sesión"} />
               <Form.Item
                 name="sesion"
                 rules={[

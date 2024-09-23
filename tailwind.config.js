@@ -18,6 +18,7 @@ export default {
       blue_uno:'#00314A',
       white:'#fff',
       black:'#000000',
+      blue_midle:'#004B70',
       gray:{
         100:"#B6C8C7",
         300:"#D1E0D8",

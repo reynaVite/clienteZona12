@@ -37,9 +37,8 @@ export function Salud() {
   const [categorias, setCategorias] = useState([]); 
   const [showCategories, setShowCategories] = useState(false);
   const [secondModalVisible, setSecondModalVisible] = useState(false);
-    // Estado local para manejar los valores de cada input
-    const [inputValues, setInputValues] = useState({});
-    const [errorMessage, setErrorMessage] = useState('');
+  const [inputValues, setInputValues] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleToggleCategories = () => {
     setShowCategories(!showCategories);
@@ -143,31 +142,43 @@ export function Salud() {
 
   const handleGuardarDato = async () => {
     try {
-     
-      let existeRegistro = false; // Variable para controlar si ya existe un registro
-
-      
       const datosSalud = [];
+      const datosExistentes = []; // Almacenar los datos existentes
+      let datosNuevosGuardados = false; // Bandera para indicar si se guardaron datos nuevos
+  
       categorias.forEach(categoria => {
         if (inputValues[categoria.value]) {
           datosSalud.push({
             idAlumnos: idAlumnos,
             categoria: categoria.value,
-          valor: inputValues[categoria.value]
+            valor: inputValues[categoria.value]
           });
         }
       });
   
-      // Mostrar todos los datos recopilados en la consola del navegador
-      console.log("Datos a enviar al servidor:", datosSalud);
-  
-    
- 
+      // Validar si los datos ya existen en la base de datos antes de insertar
       await Promise.all(datosSalud.map(async dato => {
-        await axios.post("http://localhost:3000/guardarDatosSalud", dato);
+        const response = await axios.post("http://localhost:3000/verificarSalAlumn", dato);
+        // Verificar si ya existen datos con el mismo idAlumnos y categoria
+        if (!response.data.exists) {
+          await axios.post("http://localhost:3000/guardarDatosSalud", dato);
+          datosNuevosGuardados = true; // Se ha guardado al menos un dato nuevo
+        } else {
+          datosExistentes.push({
+            ...dato,
+            categoria: categorias.find(cat => cat.value === dato.categoria).label
+          });
+        }
       }));
   
-     
+      datosExistentes.forEach(dato => {
+        message.warning(`¡La categoría "${dato.categoria}" ya está registrada!`);
+      });
+  
+      if (datosNuevosGuardados) {
+        message.success("Datos de salud guardados correctamente.");
+      }
+  
       setModalVisible(false);
       setInputValues({});
     } catch (error) {
@@ -177,70 +188,109 @@ export function Salud() {
   };
   
   
-
-  //VALORES MULTIVALOR  YAAA
-  const handleGuardarDatoSelect = async () => {
-    try {
-      // Enviar los datos al backend
-      console.log("ID del alumno:", idAlumnos);
-      console.log("Opciones seleccionadas de discapacidades:", opcionesSeleccionadasCheck);
-
-      await axios.post("http://localhost:3000/guardarDiscapacidades", {
-        idAlumnos: idAlumnos,
-        opcionesDiscapacitados: opcionesSeleccionadasCheck
-      });
-
    
-      setModalVisible(false);
+  //VALORES MULTIVALOR  YAAA
+  const handleGuardarDiscapacidades = async () => {
+    try {
+        // Enviar los datos al backend
+        console.log("ID del alumno:", idAlumnos);
+        console.log("Opciones seleccionadas de discapacidades:", opcionesSeleccionadasCheck);
+
+        // Verificar si los datos ya existen en la base de datos
+        const response = await axios.post("http://localhost:3000/verificarDiscapacidades", {
+            idAlumnos: idAlumnos,
+            opcionesDiscapacitados: opcionesSeleccionadasCheck
+        });
+
+        if (response.data.exists) {
+            // Obtener los valores de opcionesDiscapacitados que ya están registrados
+            const opcionesRegistradas = response.data.opcionesRegistradas.join(', ');
+            // Mostrar mensaje de advertencia con los valores registrados
+            message.warning(`La(s) siguiente(s) discapacidad(es) ya están registrada(s): ${opcionesRegistradas}`);
+        } else {
+            // Los datos no existen en la base de datos, insertar nuevos datos
+            await axios.post("http://localhost:3000/guardarDiscapacidades", {
+                idAlumnos: idAlumnos,
+                opcionesDiscapacitados: opcionesSeleccionadasCheck
+            });
+            message.success('Las discapacidades se registraron correctamente');
+            // Cerrar modal después de la inserción
+            setModalVisible(false);
+        }
 
     } catch (error) {
-      console.error("Error al guardar los datos de salud:", error);
-      message.error("Error al guardar los datos de salud");
+        console.error("Error al guardar los datos de discapacidades:", error);
+        message.error("Error al guardar los datos de discapacidades");
     }
-  };
+};
+
+  
+  
 
   //VALORES MULTIVALOR YAYAYAYAY
   const handleGuardarAlergias = async () => {
     try {
-      
-     
-      // Enviar los datos al backend
-      console.log("ID del alumno:", idAlumnos);
-      console.log("Opciones seleccionadas de alergias:", opcionesSeleccionadasAlergias);
+        console.log("ID del alumno:", idAlumnos);
+        console.log("Opciones seleccionadas de alergias:", opcionesSeleccionadasAlergias);
 
-      await axios.post("http://localhost:3000/guardarAlergias", {
-        idAlumnos: idAlumnos,
-        opcionesAlergias: opcionesSeleccionadasAlergias
-      });
- 
-      setModalVisible(false);
+        const response = await axios.post("http://localhost:3000/verificarAlergias", {
+            idAlumnos: idAlumnos,
+            opcionesAlergias: opcionesSeleccionadasAlergias
+        });
+
+        if (response.data.exists) {
+            const alergiasRegistradas = response.data.alergiasRegistradas.join(', ');
+            message.warning(`La(s) siguiente(s) alergia(s) ya están registrada(s): ${alergiasRegistradas}`);
+        } else {
+            await axios.post("http://localhost:3000/guardarAlergias", {
+                idAlumnos: idAlumnos,
+                opcionesAlergias: opcionesSeleccionadasAlergias
+            });
+            message.success('Las alergias se registraron correctamente');
+            setModalVisible(false);
+        }
     } catch (error) {
-      console.error("Error al guardar los datos de salud:", error);
-      message.error("Error al guardar los datos de salud");
+        console.error("Error al guardar los datos de alergias:", error);
+        message.error("Error al guardar los datos de alergias");
     }
-  };
+};
+
 
   //VALORES MULTIVALOR  
   const handleGuardarVacunas = async () => {
     try {
-     
+        // Enviar los datos al backend
+        console.log("ID del alumno:", idAlumnos);
+        console.log("Opciones seleccionadas de vacunas:", opcionesSeleccionadasVacunas);
 
-      // Enviar los datos al backend
-      console.log("ID del alumno:", idAlumnos);
-      console.log("Opciones seleccionadas de vacunas:", opcionesSeleccionadasVacunas);
+        // Verificar si los datos ya existen en la base de datos
+        const response = await axios.post("http://localhost:3000/verificarVacunas", {
+            idAlumnos: idAlumnos,
+            opcionesVacunas: opcionesSeleccionadasVacunas
+        });
 
-      await axios.post("http://localhost:3000/guardarVacunas", {
-        idAlumnos: idAlumnos,
-        opcionesVacunas: opcionesSeleccionadasVacunas
-      });
+        if (response.data.exists) {
+            // Obtener los valores de opcionesVacunas que ya están registrados
+            const vacunasRegistradas = response.data.opcionesRegistradas.join(', ');
+            // Mostrar mensaje de advertencia con los valores registrados
+            message.warning(`La(s) siguiente(s) vacuna(s) ya están registrada(s): ${vacunasRegistradas}`);
+        } else {
+            // Los datos no existen en la base de datos, insertar nuevos datos
+            await axios.post("http://localhost:3000/guardarVacunas", {
+                idAlumnos: idAlumnos,
+                opcionesVacunas: opcionesSeleccionadasVacunas
+            });
+            message.success('Las vacunas se registraron correctamente');
+            // Cerrar modal después de la inserción
+            setModalVisible(false);
+        }
 
-   
-      setModalVisible(false);
     } catch (error) {
-      console.error("Error al guardar los datos de salud:", error);
-      message.error("Error al guardar los datos de salud");
+        console.error("Error al guardar los datos de vacunas:", error);
+        message.error("Error al guardar los datos de vacunas");
     }
-  };
+};
+
 
   useEffect(() => {
     obtenerCategorias();
@@ -251,8 +301,7 @@ export function Salud() {
     console.log("ID del alumno:", idAlumnos);
     console.log("Nombre:", nombre);
     setIdAlumnos(idAlumnos);
-    setNombreAlumno(nombre);
-    // Muestra la segunda modal al hacer clic en el botón "Registrar"
+    setNombreAlumno(nombre); 
     setSecondModalVisible(true);
   };
   const handleModalCancel = () => {
@@ -303,19 +352,11 @@ export function Salud() {
 
   const handleGuardarDatos = async () => {
     try {
-      // Verificar si todos los campos de texto están llenos y si las selecciones múltiples también lo están
-      if (opcionesSeleccionadasCheck.length === 0 || opcionesSeleccionadasVacunas.length === 0 || opcionesSeleccionadasAlergias.length === 0) {
-        message.error("Por favor, llena todos los campos.");
-        return;
-      }
-    
-      // Si todos los campos están llenos, continuar con el proceso de guardar datos
       await handleGuardarDato();
       await handleGuardarVacunas();
-      await handleGuardarDatoSelect();
+      await handleGuardarDiscapacidades();
       await handleGuardarAlergias();
-      setSecondModalVisible(false);
-      message.success("Datos guardados correctamente.");
+      setSecondModalVisible(false); 
     } catch (error) {
       console.error("Error al guardar los datos:", error);
       message.error("Se produjo un error al guardar los datos. Inténtalo de nuevo.");
@@ -540,6 +581,7 @@ export function Salud() {
                 </Select>
               </Form.Item>
               <label>Alergias:</label>
+              
               <Form.Item
                 name="alergiasSelect"
                 rules={[

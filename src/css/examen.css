@@ -1,0 +1,7 @@
+@media print {
+  
+    /* Ocultar elementos que no deben imprimirse */
+    .no-print {
+        display: none;
+    }
+}

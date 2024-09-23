@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel } from "antd";
-import imagensita from "C:/Users/vite/Documents/zonita.jpeg";
+import imagensita from "../img/zonita.jpeg";
 
  
 export const Carrusel = () => {

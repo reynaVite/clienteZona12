@@ -2,7 +2,6 @@ import "../css/Login.css";
 import "../css/botones.css";
 import { DownOutlined, DeleteOutlined, EditOutlined, UpOutlined} from '@ant-design/icons';
 import { Form, Select, message, Spin, Button, Modal, Row, Col, Card, Pagination } from 'antd';
-
 import { IdcardOutlined } from '@ant-design/icons';
 import React, { useEffect, useState } from "react";
 import { Header } from "../components/Header";
@@ -12,7 +11,6 @@ import { Titulo, Notificacion, Contenido } from "../components/Titulos";
 import axios from "axios";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import { Login } from "./Login";
-
 const { Option } = Select;
 const { confirm } = Modal;
 
@@ -63,7 +61,6 @@ export function Asignados() {
                     plantel: plantel 
                 }
             });
-
             console.log("Respuesta del servidor:", response);
             if (response.data.success) {
                 setRegistros(response.data.docentes);

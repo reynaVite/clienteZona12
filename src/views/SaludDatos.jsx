@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Presentacion } from "../components/Presntacion";
-import { Space, Table, Spin, Button, Select, Affix, message, Modal, Form, Input } from "antd";
+import { Space, Table, Spin, Button, Select, Card, Affix, message, Modal, Form, Row, Col, Input } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import icono from "../img/salud.png";
@@ -27,8 +26,13 @@ export function SaludDatos() {
   const [selectedAlumnoId, setSelectedAlumnoId] = useState(null);
   const [valorIdSeleccionado, setValorIdSeleccionado] = useState(null);
   const [error, setError] = useState("");
-
+  const [vacunasData, setVacunasData] = useState([]);
+  const [alergiasData, setAlergiasData] = useState([]);
+  const [discapacidadData, setDiscapaData] = useState([]);
   const [idAlumnos, setIdAlumnos] = useState("");
+  const [currentId, setCurrentId] = useState("");
+  const [buttonLoading, setButtonLoading] = useState(false); // Estado de carga del botón
+ 
 
   const StyledTable = styled(Table)`
   .selected-row {
@@ -50,14 +54,6 @@ export function SaludDatos() {
     }
   };
 
-  const obtenerValorCategorias = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/valorCategoria");
-      setcategoValtriOptions(response.data);
-    } catch (error) {
-      console.error("Error al obtener valores de las categorias:", error);
-    }
-  };
 
   const obtenerRegistros = async () => {
     try {
@@ -84,56 +80,48 @@ export function SaludDatos() {
 
 
   const handleRegistrarClick = (id, idAlumno) => {
+    setCurrentId(id);
     setId(id);
-    setIdAlumnos(idAlumno); // Aquí estableces el valor de idAlumnos
+    setIdAlumnos(idAlumno);
     setModalVisible(true);
   };
 
 
-  const handleGuardarDato = async () => {
+  const handleUpdate = async () => {
+    setButtonLoading(true); 
     try {
       if (valor.trim() === "") {
         message.error("Por favor, complete todos los campos.");
         return;
       }
 
-
-      // Si no existe un registro previo, proceder con la actualización
+      // Actualizar el registro específico en la base de datos
       await axios.post("http://localhost:3000/actualizarSalud", {
         id: id,
-        idAlumnos: idAlumnos, // Agregamos el idAlumnos en la solicitud
-        categoria: categoria.trim(),
+        idAlumnos: idAlumnos,
         valor: valor.trim()
       });
+
+      // Actualizar el registro específico en los registros filtrados
+      const updatedFilteredRecords = registrosFiltrados.map(record => {
+        if (record.id === id) {
+          return { ...record, valor: valor.trim() };
+        }
+        return record;
+      });
+      setRegistrosFiltrados(updatedFilteredRecords);
 
       message.success("Datos de salud actualizados correctamente.");
       setModalVisible(false);
       setCategoria("");
       setValor("");
-      obtenerRegistros(); // Vuelve a obtener todos los registros
-      handleVerDato(selectedAlumnoId); // Actualiza los registros filtrados
-
-      // Actualiza los registros filtrados después de guardar el dato actualizado
-      const updatedRecords = registrosFiltrados.map(record => {
-        if (record.id === id) {
-          return {
-            ...record,
-            nombreCategoria: categoria.trim(),
-            valor: valor.trim()
-          };
-        } else {
-          return record;
-        }
-      });
-
-      setRegistrosFiltrados(); // Establece los registros filtrados actualizados en el estado
     } catch (error) {
       console.error("Error al actualizar los datos de salud:", error);
       message.error("Error al actualizar los datos de salud");
+    }finally {
+      setButtonLoading(false); 
     }
   };
-
-
   const handleModalCancel = () => {
     setModalVisible(false);
   };
@@ -151,6 +139,7 @@ export function SaludDatos() {
       setDeleteModalVisible(false);
     }
   };
+
   const handleCancelDelete = () => {
     setDeleteModalVisible(false);
   };
@@ -159,28 +148,27 @@ export function SaludDatos() {
     try {
       setSelectedAlumnoId(idAlumno);
       console.log("ID del alumno:", idAlumno);
-  
-      // Llamada a la función para hacer una consulta al backend
       await consultarBackend(idAlumno);
       await discapacidad(idAlumno);
-      await vacunas(idAlumno);
-      // Filtrar registros basados en el idAlumno
+      await vacunas(idAlumno); 
       const filteredRecords = registros.filter(record => record.idAlumno === idAlumno);
       setRegistrosFiltrados(filteredRecords);
     } catch (error) {
-      console.error("Error al manejar la visualización de datos:", error);
-      // Manejo de errores, por ejemplo, mostrar un mensaje al usuario
+      console.error("Error al manejar la visualización de datos:", error); 
     }
   };
-  
+
 
   const consultarBackend = async (idAlumno) => {
     // Realiza aquí la consulta al backend utilizando Axios u otra biblioteca
     try {
       // Ejemplo de consulta al backend utilizando Axios
       const response = await axios.get(`http://localhost:3000/ConsultarUnicos/${idAlumno}`);
-      // Procesar la respuesta del backend, si es necesario
+      const responseData = response.data;
       console.log("Respuesta del backend:", response.data);
+
+      // Actualizar el estado con los datos de las vacunas
+      setAlergiasData(responseData);
     } catch (error) {
       console.error("Error al consultar el backend:", error);
       // Manejo de errores, por ejemplo, mostrar un mensaje al usuario
@@ -194,28 +182,29 @@ export function SaludDatos() {
       // Ejemplo de consulta al backend utilizando Axios
       const response = await axios.get(`http://localhost:3000/ConsultarDiscapacifdada/${idAlumno}`);
       // Procesar la respuesta del backend, si es necesario
+      const responseData = response.data;
       console.log("Respuesta del backend:", response.data);
+
+      // Actualizar el estado con los datos de las vacunas
+      setDiscapaData(responseData);
     } catch (error) {
       console.error("Error al consultar el backend:", error);
       // Manejo de errores, por ejemplo, mostrar un mensaje al usuario
     }
   };
-
 
   const vacunas = async (idAlumno) => {
-    // Realiza aquí la consulta al backend utilizando Axios u otra biblioteca
     try {
-      // Ejemplo de consulta al backend utilizando Axios
-      const response = await axios.get(`http://localhost:3000/ConsultarDiscapacifdada/${idAlumno}`);
-      // Procesar la respuesta del backend, si es necesario
-      console.log("Respuesta del backend:", response.data);
+      const response = await axios.get(`http://localhost:3000/ConsultarVacunas/${idAlumno}`);
+      const responseData = response.data;
+
+      // Actualizar el estado con los datos de las vacunas
+      setVacunasData(responseData);
     } catch (error) {
       console.error("Error al consultar el backend:", error);
-      // Manejo de errores, por ejemplo, mostrar un mensaje al usuario
+      alert("Hubo un error al consultar el backend. Por favor, inténtalo de nuevo más tarde.");
     }
   };
-
-  
 
   const columns = [
     {
@@ -277,13 +266,33 @@ export function SaludDatos() {
       ),
     },
   ];
-  const alergia = [
-    {      
-      title: "Valor",
-      dataIndex: "valor",
-      key: "valor",
-    },{}
-  ]
+
+
+  const vacunasColumns = [
+    {
+      title: "Vacunas",
+      dataIndex: "nombre",
+      key: "nombre",
+    }
+  ];
+
+  const alergiasColumns = [
+    {
+      title: "Alergias",
+      dataIndex: "alergia",
+      key: "alergia",
+    }
+  ];
+
+  const discapacidadColumns = [
+    {
+      title: "Discapacidades",
+      dataIndex: "nombre",
+      key: "nombre",
+    }
+  ];
+
+
   return (
     <>
       <Affix><Header /></Affix>
@@ -298,33 +307,70 @@ export function SaludDatos() {
       />
       <Titulo tit={"Datos médicos del alumno"} />
 
-      <div className="w-10/12 mx-auto" style={{ textAlign: "center" }}>
-        {loading ? (<Spin size="large" />) : (
-          <StyledTable
-            columns={columns}
-            dataSource={uniqueRecordsArray}
-            bordered
-            rowClassName={(record) => (record.idAlumno === selectedAlumnoId ? 'selected-row' : '')}
-          />
-        )}
-      </div>
-
-
-      <br></br>
-
-      <div className="w-10/12 mx-auto" style={{ textAlign: "center" }}>
-        {loading ? (
-          <Spin size="large" />
-        ) : (
-
-          <Table columns={salud} dataSource={registrosFiltrados} bordered />
-        )}
-      </div>
-      <div className="flex flex-row  w-11/12 m-auto mt-10 justify-center items-center">
-          <div className="basis-1/2">          
-            <Table columns={alergia} dataSource={registrosFiltrados} bordered />
-          </div>
-          <div className="basis-1/2">si</div>
+      <div style={{ display: 'flex', justifyContent: 'center' }}>
+        <Row justify="center" gutter={[16, 16]}>
+          <Col xs={24} sm={24} md={12} lg={10}>
+            <div style={{ maxHeight: "80vh", overflowY: "auto" }}>
+              <div style={{ textAlign: "center", marginBottom: "16px" }}>
+                {loading ? (
+                  <Spin size="large" />
+                ) : (
+                  <div style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}>
+                    <StyledTable
+                      columns={columns}
+                      dataSource={uniqueRecordsArray}
+                      bordered
+                      rowClassName={(record) => (record.idAlumno === selectedAlumnoId ? 'selected-row' : '')}
+                      sticky={{ position: "sticky", top: 0 }}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+          </Col>
+          <Col xs={24} sm={24} md={12} lg={10}>
+            <div style={{ textAlign: "center", maxWidth: "600px" }}>
+              {loading ? (
+                <Spin size="large" />
+              ) : (
+                <Space direction="vertical" style={{ width: "100%" }}>
+                  <Table
+                    columns={salud}
+                    dataSource={registrosFiltrados}
+                    bordered
+                    sticky={{ position: "sticky", top: 0 }}
+                  />
+                  <div style={{ display: 'flex' }}>
+                    <div style={{ flex: 1 }}>
+                      <Table
+                        columns={vacunasColumns}
+                        dataSource={vacunasData}
+                        bordered
+                        sticky={{ position: "sticky", top: 0 }}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Table
+                        columns={alergiasColumns}
+                        dataSource={alergiasData}
+                        bordered
+                        sticky={{ position: "sticky", top: 0 }}
+                      />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <Table
+                        columns={discapacidadColumns}
+                        dataSource={discapacidadData}
+                        bordered
+                        sticky={{ position: "sticky", top: 0 }}
+                      />
+                    </div>
+                  </div>
+                </Space>
+              )}
+            </div>
+          </Col>
+        </Row>
       </div>
 
 
@@ -336,44 +382,10 @@ export function SaludDatos() {
           <Button key="cancel" onClick={handleModalCancel}>
             Cancelar
           </Button>,
-
-
-          <Button key="submit" onClick={() => handleGuardarDato(selectedAlumnoId)}>Actualizar</Button>
-
+          <Button key="submit" onClick={() => handleUpdate(selectedAlumnoId) } loading={buttonLoading}>Actualizar</Button>
         ]}
       >
-
         <Form layout="vertical">
-          <label>Categoría:</label>
-          <Form.Item
-            name="categoria"
-            rules={[
-              {
-                required: true,
-                message: "Seleccione una categoría",
-              },
-            ]}
-          >
-            <Select
-              placeholder="Ejemplo: Peso.... "
-              suffixIcon={<IdcardOutlined />}
-              onChange={(value, option) => {
-                setCategoria(value.toString());
-                setValorIdSeleccionado(option.valor_id.toString()); // Aquí estableces valorIdSeleccionado
-                setValor("");
-                setError(""); // Limpiar el mensaje de error al cambiar la categoría
-              }}
-              value={categoria}
-            >
-              {categotriOptions.map((option) => (
-                <Option key={option.value} value={option.value.toString()} valor_id={option.valor_id}>
-                  {option.label}
-                </Option>
-              ))}
-
-            </Select>
-          </Form.Item>
-
           <label>Valor:</label>
           <Form.Item
             name="valor"
@@ -390,13 +402,14 @@ export function SaludDatos() {
               prefix={<UserOutlined />}
               onChange={(e) => {
                 const inputValue = e.target.value;
-                if (valorIdSeleccionado === '1') {
+                const valorId = registrosFiltrados.find(record => record.id === currentId)?.valor_id; 
+                if (valorId === 1) {
                   if (/^[A-Za-z\u00C0-\u017F\s]*$/.test(inputValue)) {
                     setValor(inputValue);
                   } else {
                     message.error("Ingresa solo letras en este campo.");
                   }
-                } else if (valorIdSeleccionado === '2') {
+                } else if (valorId === 2) {
                   if (/^\d*\.?\d*$/.test(inputValue)) {
                     setValor(inputValue);
                   } else {

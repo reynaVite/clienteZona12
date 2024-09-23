@@ -14,7 +14,7 @@ export function Header() {
 
   const userCURP = localStorage.getItem("userCURP") || "";
   const userPlantel = localStorage.getItem("userPlantel") || ""; 
-
+ 
   const userRole = localStorage.getItem("userRole") || "guest";
   const filteredNavigation = routesByRole[userRole] || [];
 

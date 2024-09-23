@@ -1,8 +1,8 @@
 import React, { Component } from "react";
 import ChatBot from "react-simple-chatbot";
-import { ThemeProvider } from "styled-components";
-import { RobotOutlined } from '@ant-design/icons';
-
+import { ThemeProvider } from "styled-components"; 
+import botAvatar from "../img/robot.png";
+import userAvatar from "../img/persona.png";   
 
 const theme = {
   background: "#f5f8fb",
@@ -18,10 +18,10 @@ const theme = {
 class Contenido extends Component {
   render() {
     return (
-      
-      <ThemeProvider theme={theme} >
+      <ThemeProvider theme={theme}>
         <ChatBot
-         botAvatar={<RobotOutlined />}
+          botAvatar={botAvatar}
+          userAvatar={userAvatar}  // Add this line to set the user avatar
           steps={[
             {
               id: "1",
@@ -78,7 +78,7 @@ class Contenido extends Component {
             {
               id: "7A",
               message:
-                "Ingresa a la sección login, llena todos los campos y presiona el botón “Ingresar”                ",
+                "Ingresa a la sección login, llena todos los campos y presiona el botón “Ingresar”",
             },
             {
               id: "7B",

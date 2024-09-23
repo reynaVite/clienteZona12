@@ -27,6 +27,9 @@ import { Asignados } from "../views/Asignados";
 import { AdminRe } from "../views/AdminRe";
 import { AdminRe2 } from "../views/AdminRe2";
 import { AdminSol } from "../views/AdminSol";
+
+
+ 
 import NotFound from "../errores/404";
 
 export const router = createBrowserRouter([
@@ -124,5 +127,5 @@ export const router = createBrowserRouter([
   },  {
     path: "/Asignados",
     element: <Asignados />,
-  },
+  } 
 ]);

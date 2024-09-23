@@ -1,43 +1,31 @@
 import "../css/Login.css";
-import AES from 'crypto-js/aes';
-import CryptoJS from 'crypto-js'; // Importa CryptoJS
 import { Link } from 'react-router-dom';
 import { Form, Input, Button, Select, message, Checkbox, Progress } from 'antd';
 import React, { useEffect, useState } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ScrollToTop } from "../components/ScrollToTop";
-import { UserOutlined, LockOutlined, CheckCircleOutlined, PhoneOutlined, IdcardOutlined } from "@ant-design/icons";
+import { UserOutlined, LockOutlined, CheckCircleOutlined, IdcardOutlined } from "@ant-design/icons";
 import { Subtitulo, Notificacion, Contenido } from "../components/Titulos";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 
 const { Option } = Select;
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  
+
 export function RegistroF() {
-  const [plantelOptions, setPlantelOptions] = useState([]);
-  const [sesionOptions, setSesionOptions] = useState([]);
   const [preguntasSecretasOptions, setPreguntasSecretasOptions] = useState([]);
   const [contrasenaFortaleza, setContrasenaFortaleza] = useState(0);
   const [checked, setChecked] = useState(false);
   const [formValues, setFormValues] = useState({});
   const [curp, setCurp] = useState(""); // Estado para almacenar la CURP
-
-
- 
-
   const [showFirstForm, setShowFirstForm] = useState(true);
   const [showSecondForm, setShowSecondForm] = useState(false);
-
   const hasMinimumLength = (value) => value.length <= 12;
   const hasUpperCase = (value) => /[A-Z]/.test(value);
   const hasLowerCase = (value) => /[a-z]/.test(value);
   const hasNumber = (value) => /\d/.test(value);
   const hasSpecialChar = (value) => /[!@#$%^&*(),.?":{}|<>]/.test(value);
-  const hasNoSpaces = (value) => !/\s/.test(value);
-
 
   const handleFormValuesChange = (changedValues, allValues) => {
     setFormValues(allValues);
@@ -46,8 +34,6 @@ export function RegistroF() {
   const handleFormValuesChange1 = (changedValues, allValues) => {
     setFormValues(allValues);
   };
-
-
 
   const calculatePasswordStrength = (password) => {
     let score = 0;
@@ -79,7 +65,6 @@ export function RegistroF() {
     let nivelSeguridad = "Baja";
     let color = "red";
     let progressPercentage = 25;
-
     if (score >= 6) {
       nivelSeguridad = "Medio";
       color = "orange";
@@ -161,7 +146,7 @@ export function RegistroF() {
 
         }
       } else {
-        message.error('La CURP no está pre-registrada.');
+        message.error('CURP no pre-registrada o no aprobada por el supervisor.');
       }
     } catch (error) {
       console.error('Error al insertar datos en la base de datos:', error);
@@ -177,29 +162,26 @@ export function RegistroF() {
       <Contenido conTit={"Por favor, completa todos los campos."} />
     );
   };
-  
+
 
   const onFinish1 = async (values) => {
     try {
-  // Realizar una solicitud al servidor para obtener la clave de cifrado
-  
       const dataToInsert = {
         pregunta: values.pregunta,
         respuesta: values.respuesta,
         contrasena: values.contrasena,
         curp: curp, // Utiliza la CURP almacenada en el estado como ID
       };
-    
+
       const response = await axios.post('http://localhost:3000/insertar-dato2', dataToInsert);
       message.success('Registro exitoso');
       navigate('/Login');
-      
+
     } catch (error) {
       console.error('Error al insertar datos en la base de datos:', error);
       message.error('Error al realizar el registro. Por favor, inténtalo de nuevo.');
     }
   };
-  
 
   const onFinishFailed1 = (errorInfo) => {
     console.log("Failed:", errorInfo);
@@ -211,12 +193,13 @@ export function RegistroF() {
   return (
     <>
       <CSPMetaTag />
-
       <Header />
       <div className="Simon">
         <ScrollToTop />
         <div className="login-box">
-          <Subtitulo subTit={"Registro"} />
+          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-center">
+            Registro
+          </h2>
           {showFirstForm && (
             <Form
               name="loginForm"
@@ -224,11 +207,8 @@ export function RegistroF() {
               initialValues={{ remember: true }}
               onFinish={onFinish}
               onFinishFailed={onFinishFailed}
-              onValuesChange={handleFormValuesChange}
-
-            >
+              onValuesChange={handleFormValuesChange}>
               <Contenido conTit={"Curp:"} />
-
               <Form.Item
                 name="curp"
                 rules={[
@@ -262,17 +242,16 @@ export function RegistroF() {
                   },
                 ]}
               >
-                <Input
+                <Input className="lg:w-3/3 mb-5 h-[42px]  mt-1 text-base border border-black border-opacity-30 rounded-md shadow-md"
                   prefix={<CheckCircleOutlined />}
                   placeholder="Ejemplo: MAPA850210MVERXXA1"
                 />
               </Form.Item>
-
-
-
-
               <Form.Item>
-                <Button type="primary" htmlType="submit" disabled={!formValues.curp}  style={{ color: 'black' }}>
+                <Button className="bg-blue_uno text-white h-11 text-lg w-3/4 
+                        hover:text-gray lg:mt-2 hover:bg-white
+                          md:w-2/4
+                          celular:w-2/4 celular:mb-5 celular:mt-3 shadow-md" type="primary" htmlType="submit" disabled={!formValues.curp} style={{ color: 'black' }}>
                   Continuar registro
                 </Button>
               </Form.Item>
@@ -285,9 +264,8 @@ export function RegistroF() {
               initialValues={{ remember: true }}
               onFinish={onFinish1}
               onFinishFailed={onFinishFailed1}
-              onValuesChange={handleFormValuesChange1}
-            >
-           
+              onValuesChange={handleFormValuesChange1}>
+
               <Contenido conTit={"Pregunta secreta:"} />
               <Form.Item
                 name="pregunta"
@@ -442,7 +420,7 @@ export function RegistroF() {
               </Form.Item>
 
               <Form.Item>
-                <Button  style={{ color: 'black' }} type="primary" htmlType="submit" disabled={!checked || !formValues.pregunta || !formValues.respuesta || !formValues.contra || !formValues.terms}>
+                <Button style={{ color: 'black' }} type="primary" htmlType="submit" disabled={!checked || !formValues.pregunta || !formValues.respuesta || !formValues.contra || !formValues.terms}>
                   Registrar
                 </Button>
               </Form.Item>
@@ -452,16 +430,13 @@ export function RegistroF() {
                   setShowFirstForm(true);
                   setShowSecondForm(false);
                 }}
-                style={{ color: 'black' }}
+                  style={{ color: 'black' }}
                 >
                   Ir atrás
                 </Button>
               </Form.Item>
-
             </Form>
-
           )}
-
         </div>
       </div>
       <Footer />

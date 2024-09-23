@@ -24,8 +24,7 @@ export function AsigGrupo() {
     const [modalVisible, setModalVisible] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(9);
-    const [buttonLoading, setButtonLoading] = useState(false); // Estado de carga del botón
-    // Estado para los datos obtenidos de obtenerGrupoDispo
+    const [buttonLoading, setButtonLoading] = useState(false);  
     const [grupoDisponibles, setGrupoDisponibles] = useState([]);
 
 
@@ -42,22 +41,24 @@ export function AsigGrupo() {
         2: 'Benito Juárez',
         3: 'Héroe Agustín'
     };
-
-    const sesionTextos = {
-        1: 'Supervisor',
-        2: 'Director',
-        3: 'Maestro'
-    };
-
+ 
     const obtenerGrupoDispo = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/grupogradoDispo");
+            const userPlantel = localStorage.getItem("userPlantel") || ""; // Obtén el valor de plantel
+            console.log("Plantel enviado al backend:", userPlantel); // Consola para ver el valor
+    
+            // Realiza la solicitud GET con el plantel como parámetro
+            const response = await axios.get("http://localhost:3000/grupogradoDispo", {
+                params: { plantel: userPlantel } // Enviar plantel como parámetro
+            });
+    
             setGrupoDisponibles(response.data); // Actualiza el estado con los datos obtenidos
         } catch (error) {
             console.error("Error al obtener valores de grupos:", error);
             // Manejar el error
         }
     };
+
     
     const obtenerRegistros = async () => {
         try {

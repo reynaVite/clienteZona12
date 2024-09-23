@@ -84,10 +84,20 @@ export function AdminSol() {
         });
     };
 
+ 
+
+
     const handleToggleDetails = (index) => {
         const updatedRegistros = [...registros];
-        updatedRegistros[index].showDetails = !updatedRegistros[index].showDetails;
-        setRegistros(updatedRegistros);
+        // Asegúrate de que el índice esté dentro del rango de registros
+        if (index >= 0 && index < updatedRegistros.length) {
+            // En lugar de acceder directamente a la propiedad, podrías usar un enfoque más seguro
+            updatedRegistros[index] = {
+                ...updatedRegistros[index],
+                showDetails: !updatedRegistros[index].showDetails
+            };
+            setRegistros(updatedRegistros);
+        }
     };
 
     const handlePaginationChange = (pageNumber) => {

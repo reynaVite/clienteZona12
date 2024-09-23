@@ -11,7 +11,7 @@ export function CSPMetaTag() {
             style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/antd.css;
             font-src 'self' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/fonts/;
             img-src 'self'; 
-            connect-src 'self' http://localhost:3000 https://www.google-analytics.com https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188;
+            connect-src 'self' http://localhost:3000 https://www.google-analytics.com https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188 https://api.hunter.io;
             frame-src 'self' https://www.google.com;
             form-action 'self';
         `;

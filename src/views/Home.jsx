@@ -40,7 +40,7 @@ export function Home() {
               <Image className="lg:min-w-max md:w-1/2" src={inicio} />
             </div>
             <div className="basis-1/2 text-left m-10  px-10">
-              <h3 className="text-2xl font-semibold">Informacion relevante</h3>
+              <h3 className="text-2xl font-semibold">Información relevante</h3>
               <p className="mt-6 text-lg leading-10">
                 {" "}
                 Es una unidad económica registrada desde 2014-12 que se dedica a
