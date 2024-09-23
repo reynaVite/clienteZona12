@@ -63,22 +63,21 @@ const Comments = () => {
     try {
       const fecha = new Date();
       const hora = new Date();
-
+  
       const formattedFecha = format(fecha, 'yyyy-MM-dd');
       const formattedHora = format(hora, 'HH:mm:ss');
-
-      const postData = {  
+  
+      const postData = {
         id: id,
         opinion: descripcion,
         fecha: formattedFecha,
         hora: formattedHora,
-        curp: exam?.curp || "N/A"
+        curp: userCurp  || "N/A", // CURP del docente 
       };
-
+  
       console.log("Datos enviados a la ruta guardarForo:", postData);
-
+  
       await axios.post("http://localhost:3000/guardarForo", postData);
-
       message.success("Comentario guardado correctamente.");
       setComments([...comments, postData]);
       setDescripcion("");
@@ -87,7 +86,7 @@ const Comments = () => {
       message.error("Error al guardar el comentario");
     }
   };
-
+  
   const handleDelete = (commentId) => {
     Modal.confirm({
       title: 'Confirmar eliminación',
@@ -122,16 +121,9 @@ const Comments = () => {
 
   const handleUpdate = async () => {
     try {
-      const fecha = new Date();
-      const hora = new Date();
-
-      const formattedFecha = format(fecha, 'yyyy-MM-dd');
-      const formattedHora = format(hora, 'HH:mm:ss');
-
       const postData = {
         id: editCommentId,
         opinion: editDescripcion,
-       
       };
 
       await axios.put("http://localhost:3000/actualizarComentario", postData);
@@ -173,7 +165,7 @@ const Comments = () => {
           <p className="text-gray-600 mt-2">
             <strong>Materia:</strong> {exam?.materia || "Cargando..."}<br />
             <strong>Descripción:</strong> {exam?.descripcion || "Cargando..."}<br />
-            <strong>CURP:</strong> {exam?.curp || "Cargando..."}<br />
+            <strong>CURP:</strong> {exam?.docente_curp || "Cargando..."}<br />
             <strong>Fecha:</strong> {exam?.fecha ? format(new Date(exam.fecha), 'dd/MM/yyyy') : "Cargando..."}<br />
             <strong>Hora:</strong> {exam?.hora || "Cargando..."}
           </p>
@@ -200,35 +192,39 @@ const Comments = () => {
           <div className="mt-4">
             <h3 className="text-lg font-bold">{comments.length} comentarios</h3>
             <div>
-              {comments.map((comment, index) => (
-                <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
-                  <Comment
-                    author={comment.curp}
-                    avatar="https://cdn-icons-png.freepik.com/512/878/878719.png"
-                    content={comment.opinion}
-                    datetime={`${format(new Date(comment.fecha), 'dd/MM/yyyy')} ${comment.hora}`}
-                  />
-                  {console.log(`Comparando CURP del usuario: ${userCurp} con CURP del comentario: ${comment.curp}`)} {/* Verifica la comparación */}
-                  {comment.curp === userCurp && (
-                    <div className="mt-2 flex gap-2">
-                      <Button
-                        onClick={() => handleEdit(comment.id)}
-                        icon={<EditOutlined />}
-                        style={{ marginRight: '8px' }}
-                      >
-                        Editar
-                      </Button>
-                      <Button
-                        onClick={() => handleDelete(comment.id)}
-                        icon={<DeleteOutlined />}
-                        danger
-                      >
-                        Eliminar
-                      </Button>
-                    </div>
-                  )}
-                </div>
-              ))}
+              {comments.map((comment, index) => {
+                console.log(`Comentario CURP: ${comment.curp}`); // Muestra el CURP del comentario
+                console.log(`Comparando CURP del usuario: ${userCurp} con CURP del comentario: ${comment.curp}`); // Verifica la comparación
+
+                return (
+                  <div key={index} className="mb-4 p-4 border border-gray-300 rounded">
+                    <Comment
+                      author={comment.curp}
+                      avatar="https://cdn-icons-png.freepik.com/512/878/878719.png"
+                      content={comment.opinion}
+                      datetime={`${format(new Date(comment.fecha), 'dd/MM/yyyy')} ${comment.hora}`}
+                    />
+                    {comment.curp === userCurp && (
+                      <div className="mt-2 flex gap-2">
+                        <Button
+                          onClick={() => handleEdit(comment.id)}
+                          icon={<EditOutlined />}
+                          style={{ marginRight: '8px' }}
+                        >
+                          Editar
+                        </Button>
+                        <Button
+                          onClick={() => handleDelete(comment.id)}
+                          icon={<DeleteOutlined />}
+                          danger
+                        >
+                          Eliminar
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -244,7 +240,7 @@ const Comments = () => {
           }}>
             Cancelar
           </Button>,
-          <Button key="submit"   onClick={handleUpdate} disabled={!editDescripcion.trim()}>
+          <Button key="submit" onClick={handleUpdate} disabled={!editDescripcion.trim()}>
             Editar
           </Button>,
         ]}

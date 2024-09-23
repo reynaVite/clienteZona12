@@ -13,7 +13,7 @@ const formatDate = (dateString) => {
   });
 };
 
-const ExamCard = ({ title, description, curp, hora, fecha }) => (
+const ExamCard = ({ title, description, docente_curp, hora, fecha }) => (
   <div
     className="h-auto w-80 rounded-3xl cursor-pointer 
                shadow-gray-900 shadow-2xl hover:shadow-lg hover:shadow-gray-300 
@@ -24,7 +24,7 @@ const ExamCard = ({ title, description, curp, hora, fecha }) => (
     </div>
     <div className="p-4">
       <p className="text-gray-600 mt-2 line-clamp-3">{description}</p>
-      <p className="text-gray-400 text-sm mt-2">CURP: {curp}</p>
+      <p className="text-gray-400 text-sm mt-2">CURP: { docente_curp}</p>
       <p className="text-gray-400 text-sm mt-1">Hora: {hora}</p>
       <p className="text-gray-400 text-sm mt-1">Fecha: {formatDate(fecha)}</p>
     </div>

@@ -47,8 +47,7 @@ const ExamCatalog = () => {
         icono={
           <img
             src={icono}
-            className="lg:w-[280px] lg:translate-x-32 lg:-translate-y-10 text-white 
-            celular:translate-x-2"
+            className="lg:w-[280px] lg:translate-x-32 lg:-translate-y-10 text-white celular:translate-x-2"
             alt="Exámenes"
           />
         }
@@ -58,17 +57,15 @@ const ExamCatalog = () => {
           {Object.keys(groupedExams).map((materia) => (
             <div key={materia} className="flex flex-col items-center">
               {groupedExams[materia].map((exam) => (
-                <div
-                  key={exam.id}
-                  onClick={() => handleExamClick(exam)}
-                >
+                <div key={exam.id} onClick={() => handleExamClick(exam)}>
                   <ExamCard
-                    title={exam.materia}
-                    description={exam.descripcion}
-                    curp={exam.curp}
-                    hora={exam.hora}
-                    fecha={exam.fecha}
-                  />
+  title={exam.materia}
+  description={exam.descripcion}
+  docente_curp={exam.docente_curp} // Asegúrate de que esta línea esté correcta
+  hora={exam.hora}
+  fecha={exam.fecha}
+/>
+
                 </div>
               ))}
             </div>
