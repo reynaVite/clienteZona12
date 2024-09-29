@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/e44e6477-c328-4c89-a0f2-a6a92ea6a88e)# Proyecto de Aplicación Web Progresiva (PWA)
+# Proyecto de Aplicación Web Progresiva (PWA)
 
 ## Descripción del Proyecto
 Este proyecto consiste en una **Aplicación Web Progresiva (PWA)** desarrollada con tecnologías modernas como **React +  Vite** y **Service Workers** para ofrecer una experiencia web mejorada y optimizada para dispositivos móviles y de escritorio. Su principal objetivo es facilitar el acceso a los recursos y funcionalidades clave de manera intuitiva y eficiente, mejorando la experiencia del usuario final tanto en línea como offline. La aplicación está diseñada para ser rápida, confiable y accesible, permitiendo la interacción con la plataforma incluso cuando no hay conexión a internet disponible.
@@ -16,13 +16,13 @@ El proyecto está dividido en sprints de corta duración (1-3 semanas). Cada spr
 ### 3. Planificación y fases del proyecto
 El proyecto está dividido en las siguientes fases:
 
-- ## 1. Preparación del entorno
-- ## 2. Auditoría del Proyecto
-- ## 3. Diseño de la Aplicación y Creación del App Shell
-- ## 4. Implementación del Archivo `manifest.js`
-- ## 5. Implementación del Service Worker y Funcionalidad Offline
-- ## 6. Implementación de Notificaciones Push
-- ## 7. Pruebas Finales y Despliegue
+-  1. Preparación del entorno
+-  2. Auditoría del Proyecto
+-  3. Diseño de la Aplicación y Creación del App Shell
+-  4. Implementación del Archivo `manifest.js`
+-  5. Implementación del Service Worker y Funcionalidad Offline
+-  6. Implementación de Notificaciones Push
+-  7. Pruebas Finales y Despliegue
 
 ## Gestión de Tareas e Issues
 
@@ -59,6 +59,7 @@ Se sigue la estrategia **GitFlow**:
 - `develop`: Integra las nuevas funcionalidades antes de pasar a producción.
 - `feature/`: Ramas creadas para desarrollar características específicas.
 - `hotfix/`: Ramas para corregir errores críticos en producción.
+
 ### 3. Creacion de ramas
 1. **Creación de ramas**:
    - Para cada nueva funcionalidad, se crea una rama desde `develop` con el prefijo `feature/` (e.g., `feature/nueva-funcionalidad`). Cada miembro del equipo trabaja en su rama hasta que la funcionalidad está completa.
