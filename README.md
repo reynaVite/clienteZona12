@@ -77,7 +77,7 @@ Usamos **GitHub Actions** para la integración continua, permitiendo que las pru
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/tuusuario/clienteZona12.git
+git clone https://github.com/reynaVite/clienteZona12.git
 cd clienteZona12
 ```
 ### 2. Instalar dependencias
