@@ -1,4 +1,4 @@
-# Proyecto de Aplicación Web Progresiva (PWA)
+![image](https://github.com/user-attachments/assets/e44e6477-c328-4c89-a0f2-a6a92ea6a88e)# Proyecto de Aplicación Web Progresiva (PWA)
 
 ## Descripción del Proyecto
 Este proyecto consiste en una **Aplicación Web Progresiva (PWA)** desarrollada con tecnologías modernas como **React +  Vite** y **Service Workers** para ofrecer una experiencia web mejorada y optimizada para dispositivos móviles y de escritorio. Su principal objetivo es facilitar el acceso a los recursos y funcionalidades clave de manera intuitiva y eficiente, mejorando la experiencia del usuario final tanto en línea como offline. La aplicación está diseñada para ser rápida, confiable y accesible, permitiendo la interacción con la plataforma incluso cuando no hay conexión a internet disponible.
@@ -45,6 +45,8 @@ Las tareas están etiquetadas por prioridad en Trello:
 - **Media**: Tareas importantes pero no urgentes.
 - **Baja**: Mejoras o ajustes menores.
 
+--- 
+
 ## Control de Versiones
 
 ### 1. Herramienta seleccionada
@@ -57,7 +59,31 @@ Se sigue la estrategia **GitFlow**:
 - `develop`: Integra las nuevas funcionalidades antes de pasar a producción.
 - `feature/`: Ramas creadas para desarrollar características específicas.
 - `hotfix/`: Ramas para corregir errores críticos en producción.
+### 3. Creacion de ramas
+1. **Creación de ramas**:
+   - Para cada nueva funcionalidad, se crea una rama desde `develop` con el prefijo `feature/` (e.g., `feature/nueva-funcionalidad`). Cada miembro del equipo trabaja en su rama hasta que la funcionalidad está completa.
+   - Para preparaciones de lanzamientos, se crean ramas `release/` desde `develop`.
+   - Las correcciones urgentes se realizan en ramas `hotfix/` creadas desde `master`.
 
+2. **Revisión de código**:
+   - Una vez completada la funcionalidad en la rama `feature/`, se crea un **pull request** hacia la rama `develop`. Este proceso incluye una revisión exhaustiva del código por otros miembros del equipo para garantizar que cumple con los estándares de calidad, y que no introduce errores o conflictos.
+   - Las ramas `release/` y `hotfix/` también requieren pull requests hacia `develop` y `master`.
+
+3. **Fusión**:
+   - Después de pasar la revisión y las pruebas, las ramas `feature/` se fusionan en `develop` y las ramas `hotfix/` se fusionan tanto en `develop` como en `master`.
+   - Las ramas de preparación de lanzamiento (`release/`) son fusionadas en `master` una vez que se aprueban y se lanzan a producción.
+
+Este flujo asegura que cada nueva funcionalidad o corrección pase por un proceso de revisión y pruebas antes de ser integrada en las ramas principales, lo que mejora la calidad y estabilidad del código.
+
+### 4. Integracion CI
+- **Pruebas unitarias** para asegurar que cada componente del sistema funcione correctamente.
+- **Pruebas de integración** para validar que los módulos interactúan adecuadamente entre sí.
+- **Linting y análisis de estilo** para asegurar que el código cumpla con las guías de estilo definidas y sea mantenible.
+
+La integración continua también ayuda a detectar errores de manera temprana y evitar que código defectuoso llegue a producción, mejorando así la eficiencia del equipo y la estabilidad del proyecto.
+
+---
+ 
 ## Estrategia de Despliegue
 
 ### 1. Estrategia seleccionada
