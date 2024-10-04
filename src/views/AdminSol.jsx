@@ -149,7 +149,7 @@ export function AdminSol() {
             <Header />
             <div className="boxAdmin">
                 <ScrollToTop />
-                <Titulo tit={"Solicitudes de registro"} />
+                <Titulo tit={"Solicitudes de registro."} />
                 {loading ? (
                     <Spin size="large" />
                 ) : (
