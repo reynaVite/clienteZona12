@@ -16,13 +16,56 @@ El proyecto está dividido en sprints de corta duración (1-3 semanas). Cada spr
 ### 3. Planificación y fases del proyecto
 El proyecto está dividido en las siguientes fases:
 
--  1. Preparación del entorno
--  2. Auditoría del Proyecto
--  3. Diseño de la Aplicación y Creación del App Shell
--  4. Implementación del Archivo `manifest.js`
--  5. Implementación del Service Worker y Funcionalidad Offline
--  6. Implementación de Notificaciones Push
--  7. Pruebas Finales y Despliegue
+
+- ### 1. Preparación del entorno
+   - **Issue/Tarea**: Configurar el entorno de desarrollo
+     - **Responsable**: Jesus Antonio Ramirez Hernandez y Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 17 de Septiembre, Fin - 20 de Septiembre 
+     - **Descripción**: Configurar el entorno de desarrollo con tecnologías como **React/Vite** y **TailwindCSS** (o las que estés utilizando).
+     - **Prioridad**: Urgente.
+
+- ### 2. Auditoría del Proyecto
+   - **Issue/Tarea**: Realizar una auditoría del proyecto
+     - **Responsable**: Jesus Antonio Ramirez Hernandez y Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 30 de Septiembre, Fin - 1 de Octubre
+     - **Descripción**: Usar herramientas como **Lighthouse** para analizar la aplicación y documentar los resultados de la auditoría.
+     - **Prioridad**: Importante.
+
+- ### 3. Diseño de la Aplicación y Creación del App Shell
+   - **Issue/Tarea**: Diseñar y crear el App Shell
+     - **Responsable**:  Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 2 de Octubre, Fin - 4 de Octubre
+     - **Descripción**: Diseñar la interfaz gráfica, crear el **App Shell** para la PWA y probar la carga del App Shell.
+     - **Prioridad**: Urgente.
+
+- ### 4. Implementación del Archivo `manifest.js`
+   - **Issue/Tarea**: Crear el archivo `manifest.js`
+     - **Responsable**: Jesus Antonio Ramirez Hernandez
+     - **Fechas**: Inicio - 3 de Octubre, Fin - 7 de Octubre
+     - **Descripción**: Crear el archivo **manifest.js**, generar los íconos necesarios y realizar pruebas de funcionamiento.
+     - **Prioridad**: Crítica/Urgente.
+
+- ### 5. Implementación del Service Worker y Funcionalidad Offline
+   - **Issue/Tarea**: Implementar el Service Worker
+     - **Responsable**: Jesus Antonio Ramirez Hernandez y Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 10 de Octubre, Fin - 18 de Octubre
+     - **Descripción**: Implementar el **Service Worker** para manejar la caché y la funcionalidad offline, probar el comportamiento offline de la aplicación y asegurar que la aplicación funcione correctamente sin conexión.
+     - **Prioridad**: Urgente.
+
+- ### 6. Implementación de Notificaciones Push
+   - **Issue/Tarea**: Integrar Notificaciones Push
+     - **Responsable**: Jesus Antonio Ramirez Hernandez y Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 18 de Octubre, Fin - 25 de Octubre
+     - **Descripción**: Integrar el servicio de **Push Notifications**, configurar el **Service Worker** para manejar las notificaciones, probar el envío de notificaciones y crear pruebas unitarias.
+     - **Prioridad**: Urgente/Importante.
+
+- ### 7. Pruebas Finales y Despliegue
+   - **Issue/Tarea**: Realizar pruebas finales
+     - **Responsable**: Jesus Antonio Ramirez Hernandez y Reyna de los Angeles Vite Vera
+     - **Fechas**: Inicio - 5 de Noviembre, Fin - 15 de Noviembre
+     - **Descripción**: Realizar pruebas de integración y usabilidad, corregir los errores encontrados durante las pruebas y desplegar la aplicación en **Vercel** o en otra plataforma de hosting.
+     - **Prioridad**: Urgente/Importante.
+
 
 ## Gestión de Tareas e Issues
 
@@ -38,7 +81,7 @@ El flujo de trabajo en Trello es el siguiente:
 4. **Revisión**: Tras finalizar la tarea, un miembro del equipo la revisa.
 5. **Cierre de tarea**: La tarjeta se mueve a la lista de tareas completadas.
 
-### 3. Priorización de tareas
+-### 3. Priorización de tareas
 Las tareas están etiquetadas por prioridad en Trello:
 
 - **Alta**: Tareas críticas que deben completarse primero.
