@@ -37,7 +37,7 @@ export function AdminRe() {
 
     const handleDarBaja = async (record) => {
         confirm({
-            title: '¿Estás seguro de dar de baja esta cuenta?',
+            title: '¿Estás seguro de dar de baja esta cuenta?.',
             icon: <ExclamationCircleOutlined />,
             okText: 'Dar de baja',
             cancelText: 'Cancelar',
