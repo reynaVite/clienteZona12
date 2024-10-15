@@ -51,7 +51,7 @@ export function Agenda() {
       message.success("Actividad agendada correctamente.");
     } catch (error) {
       console.error("Error al actualizar los datos de salud:", error);
-      message.error("Error al actualizar los datos de salud");
+      message.error("Error al actualizar los datos de salud.");
     }
   };
 
