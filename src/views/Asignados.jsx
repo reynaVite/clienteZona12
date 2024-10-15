@@ -314,7 +314,7 @@ export function Asignados() {
 
             {/*  v emergente de borrar asignación */}
             <Modal
-                title="Borrar asignación"
+                title="Borrar asignación."
                 visible={borrarModalVisible}
                 onCancel={handleCancelarBorrar}
                 footer={null}
