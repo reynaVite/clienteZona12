@@ -312,7 +312,7 @@ export function Asignados() {
                 </Form>
             </Modal>
 
-            {/* Ventana emergente de borrar asignación */}
+            {/*  v emergente de borrar asignación */}
             <Modal
                 title="Borrar asignación"
                 visible={borrarModalVisible}
