@@ -103,11 +103,12 @@
         flex-direction: column;
         position: absolute;
         top: 15vh;
-        left: 0;
-        width: 100%;
+        left: 20%;
+        width: 80%;
         opacity: 0.995;
         background-color: #00314A;
         z-index: 1000;
+        border-end-start-radius:50px ;
     }
 
     .barNav-menu.active {
@@ -115,7 +116,7 @@
     }
 
     .barNav-menu-element {
-        padding: 10px;
+        padding: 5px;
         text-align: center;
     }
 
@@ -124,4 +125,10 @@
         padding: 10px;
         border-bottom: none;
     }
+    .barNav-text:hover{
+        cursor: pointer;
+        color: #6595cc;
+        border-bottom: 0px solid rgb(255, 255, 255);
+    }
+    
 }

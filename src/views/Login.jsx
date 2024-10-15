@@ -5,21 +5,34 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
 import { ScrollToTop } from "../components/ScrollToTop";
-import { Form, Input, Button, Select, message } from "antd";
-import {CheckCircleOutlined,LockOutlined } from "@ant-design/icons";
+import { Form, Input, Button, Select, message, notification } from "antd";
+import {
+  CheckCircleOutlined,
+  LockOutlined,
+  IdcardOutlined,
+} from "@ant-design/icons";
 import { Subtitulo, Contenido } from "../components/Titulos";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import imagen from "../img/Si.jpg";
 
+const { Option } = Select;
+
 export function Login() {
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
   const [buttonBlocked, setButtonBlocked] = useState(false);
-  const [buttonLoading, setButtonLoading] = useState(false); 
+  const [buttonLoading, setButtonLoading] = useState(false); // Estado de carga del botón
+
+  // Función para manejar cambios en los valores del formulario
   const handleFormValuesChange = (changedValues, allValues) => {
     setFormValues(allValues);
   };
+
+  {
+ 
+  }
+
   const [userRole, setUserRole] = useState(null);
   const onChange = () => {
     console.log("Recapcha");
@@ -27,12 +40,13 @@ export function Login() {
 
   const navigate = useNavigate();
   const [failedAttempts, setFailedAttempts] = useState(0);
- // const [isButtonDisabled, setIsButtonDisabled] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(false);
   const [messageText, setMessageText] = useState("");
-  //const [timeLeft, setTimeLeft] = useState(0);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   const onFinish = async (values) => {
-    setButtonLoading(true);   
+    setButtonLoading(true); // Activar el estado de carga del botón
+
     try {
       const response = await axios.post(
         "http://localhost:3000/login",
@@ -49,8 +63,10 @@ export function Login() {
         localStorage.setItem("userCURP", formValues.curp); 
         localStorage.setItem("userPlantel", response.data.plantel);
 
+
         const userRole = response.data.role;
         setUserRole(userRole);
+
 
         if (userRole === 1 || userRole === 2 || userRole === 3) {
           navigate("/Inicio");
@@ -87,6 +103,7 @@ export function Login() {
     }
   };
 
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
     message.error("Por favor, completa todos los campos.");
@@ -110,6 +127,7 @@ export function Login() {
             onFinishFailed={onFinishFailed}
             onValuesChange={handleFormValuesChange}
           >
+            
             <Contenido conTit={"Ingrese su CURP:"} />
             <Form.Item
               name="curp"
@@ -223,6 +241,8 @@ export function Login() {
                 Ingresar
               </Button>
             </Form.Item>
+
+
           </Form>
         </div>
         <div className="lg:basis-3/5 lg:block md:hidden celular:hidden">
