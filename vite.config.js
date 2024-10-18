@@ -18,8 +18,7 @@ const manifestForPlugin = {
       {
         src: "./icon-512x512.png",
         sizes: "512x512",
-        type: "image/png",
-        purpose: 'favicon'
+        type: "image/png"
       },
       {
         src: '/apple-touch-icon.png',
@@ -30,14 +29,7 @@ const manifestForPlugin = {
       {
         src: "./icon-144x144.png",
         sizes: "144x144",
-        type: "image/png",
-        purpose: "any"
-      },
-      {
-        src: "./icon-256x256.png",
-        sizes: "256x256",
-        type: "image/png",
-        purpose: "icon"
+        type: "image/png"
       },
       {
         src: "./icon-384x384.png",
@@ -46,12 +38,28 @@ const manifestForPlugin = {
         purpose: "any maskable"
       }
     ],
+    
     theme_color: "#181818",
-    background_color: "#181818", //e8eac2
+    background_color: "#00314A", 
     display: "standalone",
     scope: "/",
     start_url: "/",
     orientation: "portrait",
+
+    screenshots: [
+      {
+        src: "./screenshot-desktop.png",
+        sizes: "1280x720",
+        type: "image/png",
+        form_factor: "wide"
+      },
+      {
+        src: "./screenshot-mobile.png",
+        sizes: "720x1280",
+        type: "image/png"
+      }
+    ]
+    
   },
 };
 
