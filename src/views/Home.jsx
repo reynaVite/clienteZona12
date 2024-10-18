@@ -6,7 +6,10 @@ import { ScrollToTop } from "../components/ScrollToTop";
 import inicio from "../img/imagenUno.jpg";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import { Divider, Image,Affix } from "antd";
-import { Carrusel } from "../components/Carrusel";
+import { Carrusel } from "../components/Carrusel"; 
+import ConnectionStatus from "../components/ConnectionStatus";  
+ 
+
 
 export function Home() {
   return (
@@ -23,6 +26,8 @@ export function Home() {
         <section className=" container text-center mb-5 p-4 font-custom">
           <h1 className="text-4xl py-2 font-semibold"> BIENVENIDO</h1>
           <h2 className="text-2xl py-8 font-semibold"> Zona 012 </h2>
+           <ConnectionStatus /> {/* El estado de conexión ahora se maneja internamente */}
+          <Divider />
 
           <p className="p-4  text-lg text-left leading-10">
             {" "}
