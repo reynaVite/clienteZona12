@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 
 const manifestForPlugin = {
-  registerType: "prompt",
+  registerType: "autoUpdate", // Esto hará que el SW se actualice automáticamente
   includeAssets: ['favicon.ico', "apple-touch-icon.png", "masked-icon.png"],
   manifest: {
     name: "EduZona",
@@ -38,9 +38,8 @@ const manifestForPlugin = {
         purpose: "any maskable"
       }
     ],
-    
     theme_color: "#181818",
-    background_color: "#00314A", 
+    background_color: "#00314A",
     display: "standalone",
     scope: "/",
     start_url: "/",
@@ -59,30 +58,56 @@ const manifestForPlugin = {
         type: "image/png"
       }
     ]
-    
   },
 };
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     VitePWA({
       ...manifestForPlugin,
+      strategies: 'generateSW', // Se genera el Service Worker automáticamente
       workbox: {
+        // Ajusta tus opciones de Workbox según lo que necesitas cachear
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 días
+              },
+            },
+          },
+          {
+            urlPattern: ({ request }) => request.destination === 'script' || request.destination === 'style',
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'static-resources',
+              expiration: {
+                maxEntries: 30,
+                maxAgeSeconds: 60 * 60 * 24, // 1 día
+              },
+            },
+          },
+        ],
         maximumFileSizeToCacheInBytes: 3145728, // Ajusta según tus necesidades
+      },
+      devOptions: {
+        enabled: true, // Habilitar en modo desarrollo para pruebas
       },
     })
   ],
   build: {
-    chunkSizeWarningLimit: 1000, // Ajusta el límite de advertencia de tamaño de chunk
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (id.includes('node_modules')) {
-            return 'vendor'; // Agrupa todas las dependencias en un chunk
+            return 'vendor';
           }
-          // Agrega más condiciones si es necesario
         }
       }
     }
