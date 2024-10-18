@@ -243,10 +243,30 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+
+
 root.render(
   <>
     <RouterProvider router={router}>
       <ScrollToTop />
     </RouterProvider>
   </>
+
+  
 );
+
+
+// Registro del Service Worker
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js') // Cambia la ruta si es necesario
+      .then((registration) => {
+        console.log('Service Worker registrado con éxito:', registration);
+      })
+      .catch((error) => {
+        console.log('Error al registrar el Service Worker:', error);
+      });
+  });
+}
+
+ 
