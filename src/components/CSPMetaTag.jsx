@@ -5,14 +5,15 @@ export function CSPMetaTag() {
         const meta = document.createElement('meta');
         meta.httpEquiv = 'Content-Security-Policy';
 
+        // Actualizar el contenido de CSP
         meta.content = `
-            default-src 'self';
-            script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://cdn.jsdelivr.net;
-            style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/antd.css;
-            font-src 'self' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/fonts/;
-            img-src 'self'; 
-            connect-src 'self' http://localhost:3000 https://www.google-analytics.com https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188 https://api.hunter.io;
-            frame-src 'self' https://www.google.com;
+            default-src 'self'; 
+            script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://cdn.jsdelivr.net https://www.googletagmanager.com; 
+            style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/antd.css; 
+            font-src 'self' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/fonts/; 
+            img-src 'self' data:; 
+            connect-src 'self' http://localhost:3000 https://firebaseinstallations.googleapis.com https://firebase.googleapis.com https://www.google-analytics.com https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188 https://api.hunter.io https://fcm.googleapis.com; 
+            frame-src 'self' https://www.google.com; 
             form-action 'self';
         `;
 
