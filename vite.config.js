@@ -67,8 +67,7 @@ export default defineConfig({
     VitePWA({
       ...manifestForPlugin,
       strategies: 'generateSW', // Se genera el Service Worker automáticamente
-      workbox: {
-        // Ajusta tus opciones de Workbox según lo que necesitas cachear
+      workbox: { 
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
@@ -93,10 +92,10 @@ export default defineConfig({
             },
           },
         ],
-        maximumFileSizeToCacheInBytes: 3145728, // Ajusta según tus necesidades
+        maximumFileSizeToCacheInBytes: 3145728,  
       },
       devOptions: {
-        enabled: true, // Habilitar en modo desarrollo para pruebas
+        enabled: true,  
       },
     })
   ],

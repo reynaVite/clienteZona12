@@ -1,6 +1,8 @@
-importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js');
-importScripts('https://www.gstatic.com/firebasejs/9.15.0/firebase-messaging.js');
+importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js")
+importScripts("https://www.gstatic.com/firebasejs/10.14.1/firebase-messaging-compat.js")
 
+
+ 
 const firebaseConfig = {
   apiKey: "AIzaSyAgREgP0o0aZa1VRThhKKqXHgzl6xL8Zog",
   authDomain: "eduzona-ba7dd.firebaseapp.com",
@@ -9,16 +11,22 @@ const firebaseConfig = {
   messagingSenderId: "761792972433",
   appId: "1:761792972433:web:5defaa01f3f73bcc916130",
   measurementId: "G-Y7D8QQ9JR0"
-};
+}; 
 
-firebase.initializeApp(firebaseConfig);
 
-const messaging = firebase.messaging();
+const app = firebase.initializeApp(firebaseConfig);
+const messaging = firebase.messaging(app);
 
-messaging.onBackgroundMessage((payload) => {
-  console.log('Recibido un mensaje en segundo plano: ', payload);
-});
 
-messaging.onMessage((payload) => {
-  console.log('Mensaje recibido en primer plano: ', payload);
-});
+messaging.onBackgroundMessage(payload => {
+    console.log("Recibiste mensaje mientras estabas ausente"); 
+    const notificationTitle= payload.notification.title;
+    const notificationOptions = {
+        body: payload.notification.body,
+        
+    }
+    return self.registration.showNotification(
+        notificationTitle, 
+        notificationOptions
+    )
+})

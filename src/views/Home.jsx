@@ -1,3 +1,5 @@
+// src/views/Home.jsx
+import React, { useEffect } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { Subtitulo, Titulo } from "../components/Titulos";
@@ -5,59 +7,43 @@ import "../css/Inicio.css";
 import { ScrollToTop } from "../components/ScrollToTop";
 import inicio from "../img/imagenUno.jpg";
 import { CSPMetaTag } from "../components/CSPMetaTag";
-import { Divider, Image, Affix, notification } from "antd";
+import { Divider, Image, Affix } from "antd";
 import { Carrusel } from "../components/Carrusel"; 
 import ConnectionStatus from "../components/ConnectionStatus";  
-import { useEffect } from "react";
-import { getMessaging, getToken } from "firebase/messaging";  
-import app from "../firebaseConfig";  
+import { getAuth, signInAnonymously } from "firebase/auth";
+import { getToken, onMessage } from "firebase/messaging";
+import { messaging } from "../firebase"; // Asegúrate de que la ruta sea correcta
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export function Home() {
+  // Función para autenticarse
+  const loguearse = () => {
+    signInAnonymously(getAuth())
+      .then(usuario => console.log(usuario))
+      .catch(error => console.error("Error de autenticación:", error));
+  };
+
+  // Función para activar la recepción de mensajes
+  const activarMensajes = async () => {
+    const token = await getToken(messaging, {
+      vapidKey: "BGUQaLFE9uIkwN1JxgqkPjcG9gokURPLsQQyX2UiS-9_sintKkxO3cG5TgKnIzZi02VOspT-KJNV4qmIJlhb9e8"
+    }).catch(error => console.log("Tuviste un error al generar el token"));
+
+    if (token) console.log("tu token:", token);
+    if (!token) console.log("no tienes token");
+  };
+
+  // Efecto para manejar la recepción de mensajes
   useEffect(() => {
+    const unsubscribe = onMessage(messaging, message => {
+      console.log("tu mensaje:", message);
+      toast(message.notification.title); // Mostrar notificación
+    });
+ 
+    return () => unsubscribe();
+  }, []);
 
-    // Registrar el Service Worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/firebase-messaging-sw.js', { type: 'module' })
-
-        .then((registration) => {
-          console.log('Service Worker registrado con éxito:', registration);
-          const messaging = getMessaging(app);  
-
-
-          // Solicitar el token
-          getToken(messaging, { vapidKey: 'BGUQaLFE9uIkwN1JxgqkPjcG9gokURPLsQQyX2UiS-9_sintKkxO3cG5TgKnIzZi02VOspT-KJNV4qmIJlhb9e8' })  
-            .then((currentToken) => {
-              if (currentToken) {
-                console.log('Token FCM:', currentToken); 
-                notification.success({
-                  message: 'Token FCM',
-                  description: `Token FCM: ${currentToken}`,
-                });
-              } else {
-                console.log('No hay token disponible. Solicita permiso para recibir notificaciones.');
-                notification.warning({
-                  message: 'Sin token',
-                  description: 'No hay token disponible. Solicita permiso para recibir notificaciones.',
-                });
-              }
-            })
-            .catch((err) => {
-              console.error('Error al obtener el token de FCM:', err);
-              notification.error({
-                message: 'Error',
-                description: `Error al obtener el token de FCM: ${err.message}`,
-              });
-            });
-        })
-        .catch((error) => {
-          console.error('Error al registrar el Service Worker:', error);
-          notification.error({
-            message: 'Error',
-            description: `Error al registrar el Service Worker: ${error.message}`,
-          });
-        });
-    }
-  }, []);  
   return (
     <>
       <CSPMetaTag />
@@ -65,13 +51,15 @@ export function Home() {
         <Header />
       </Affix>
       <Carrusel />
+
       <Divider className="chiUwu" />
       <main className="flex items-center justify-center">
         <section className="container text-center mb-5 p-4 font-custom">
-          <h1 className="text-4xl py-2 font-semibold">BIENVENIDO</h1>
-          <h2 className="text-2xl py-8 font-semibold">Zona 012</h2>
-          <ConnectionStatus /> {/* El estado de conexión ahora se maneja internamente */}
+          <h1 className="text-4xl py-2 font-semibold"> BIENVENIDO</h1>
+          <h2 className="text-2xl py-8 font-semibold"> Zona 012 </h2>
+          <ConnectionStatus />
           <Divider />
+
           <p className="p-4 text-lg text-left leading-10">
             Supervisión Escolar Sistema Indígena Numero 12 de Huazalingo Hidalgo
             es una unidad económica registrada desde 2014-12 que se dedica a la
@@ -91,13 +79,19 @@ export function Home() {
               <p className="mt-6 text-lg leading-10">
                 Es una unidad económica registrada desde 2014-12 que se dedica a
                 la actividad económica, actividades administrativas de
-                instituciones de bienestar social.
+                instituciones de bienestar social
               </p>
             </div>
           </section>
+
+          {/* Botones para loguearse y activar mensajes */}
+          <button onClick={loguearse} className="btn-loguearse">Loguearse</button>
+          <button onClick={activarMensajes} className="btn-activar-mensajes">Recibir noti</button>
         </section>
       </main>
+
       <Footer />
+      <ToastContainer /> {/* Componente para mostrar las notificaciones */}
     </>
   );
 }
