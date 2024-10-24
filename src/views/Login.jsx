@@ -1,7 +1,17 @@
 import { useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Header } from "../components/Header";
+
+
+
+import { uploadFile } from "../firebase/config";//
+
+
+
+
+
+
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
 import { ScrollToTop } from "../components/ScrollToTop";
@@ -18,7 +28,75 @@ import imagen from "../img/Si.jpg";
 
 const { Option } = Select;
 
+
+ 
+
+
+
 export function Login() {
+  // Estado para manejar la cámara y la imagen capturada
+const [imageSrc, setImageSrc] = useState(null);
+const videoRef = useRef(null);
+const canvasRef = useRef(null);
+
+const startCamera = () => {
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then((stream) => {
+      videoRef.current.srcObject = stream;
+    })
+    .catch((err) => {
+      console.error("Error al acceder a la cámara: ", err);
+    });
+};
+
+const capturePhoto = () => {
+  const canvas = canvasRef.current;
+  const video = videoRef.current;
+  const context = canvas.getContext("2d");
+
+  // Dibujar el frame actual del video en el canvas
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+  // Convertir la imagen del canvas a formato data URL (base64)
+  const imageDataUrl = canvas.toDataURL("image/png");
+  setImageSrc(imageDataUrl);
+
+  // Convertir la imagen a Blob para subirla a Firebase Storage
+  canvas.toBlob((blob) => {
+    uploadFile(blob); // Subir la imagen capturada a Firebase Storage
+  }, "image/png");
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
   const [buttonBlocked, setButtonBlocked] = useState(false);
@@ -110,10 +188,47 @@ export function Login() {
   };
   return (
     <>
+
+    
       <CSPMetaTag />
       <Header />
       <main className="grid lg:grid-cols-12 gap-4 md:grid-cols-12 celular:grid-cols-12">
   <ScrollToTop />
+
+
+
+
+
+
+
+
+
+
+ 
+<br></br>
+<div>
+    <h3>Capturar Foto</h3>
+    <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto' }}></video>
+    <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
+    <Button onClick={startCamera} type="primary">Iniciar Cámara</Button>
+    <Button onClick={capturePhoto} type="primary" style={{ marginLeft: '10px' }}>
+      Capturar Foto
+    </Button>
+    {imageSrc && <img src={imageSrc} alt="Captura" style={{ marginTop: '10px' }} />}
+  </div>
+
+
+
+  <div>
+    <input type='file' onChange={e=> uploadFile(e.target.files[0])}></input>
+   </div>
+
+
+
+
+  
+
+   
   
   {/* Formulario - Ocupa 5/12 columnas en pantallas grandes y 12/12 en celulares */}
   <div className="lg:col-span-5 mx-10 md:col-span-7 celular:col-span-12">

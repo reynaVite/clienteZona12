@@ -16,6 +16,8 @@ import { messaging } from "../firebase"; // Asegúrate de que la ruta sea correc
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+
+
 export function Home() {
   // Función para autenticarse
   const loguearse = () => {

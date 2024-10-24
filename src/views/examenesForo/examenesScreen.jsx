@@ -47,17 +47,18 @@ const Comments = () => {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/getPdf?id=${id}`, { responseType: 'blob' });
-        const url = URL.createObjectURL(response.data);
-        setPdfUrl(url);
+        const response = await axios.get(`http://localhost:3000/getPdf?id=${id}`);
+        const { pdfUrl } = response.data; // Obtener la URL del PDF
+        setPdfUrl(pdfUrl); // Almacenar la URL en el estado
       } catch (error) {
         console.error("Error al obtener el PDF:", error);
         message.error("Error al obtener el PDF");
       }
     };
-
+  
     fetchPdf();
   }, [id]);
+  
 
   const handleInsert = async () => {
     try {

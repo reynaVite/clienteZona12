@@ -3,17 +3,22 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { Presentacion } from "../components/Presntacion";
-import { Button, Upload, Select, message, Affix, Form, Card, Input } from "antd";
+import { Button, Select, message, Affix, Form, Card, Input } from "antd";
 import { PlusOutlined, EnterOutlined } from "@ant-design/icons";
 import icono from "../img/hombre.png";
 import { Titulo } from "../components/Titulos";
+import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../firebase/config"; // Importa correctamente tu configuración de Firebase
+import { v4 as uuidv4 } from 'uuid'; // Importar v4 para generar nombres únicos
+
 const { Option } = Select;
 
 export function Examen() {
-  const [fileList, setFileList] = useState([]);
+  const [fileList1, setFileList1] = useState([]); // Para el primer PDF
   const [opcionSeleccionada, setOpcionSeleccionada] = useState(null);
   const [materias, setMaterias] = useState([]);
   const [descripcion, setDescripcion] = useState("");
+  const [file, setFile] = useState(null); // Almacenar el archivo seleccionado temporalmente
 
   useEffect(() => {
     const fetchMaterias = async () => {
@@ -30,16 +35,28 @@ export function Examen() {
     fetchMaterias();
   }, []);
 
-  const handleFileChange = ({ file, fileList }) => {
-    if (fileList.length > 1) {
-      message.error('Solo se permite subir un archivo PDF.');
-      return false;
+  // Función para subir archivo a Firebase Storage
+  const uploadFile = async (file) => {
+    if (!file) return;
+
+    const uniqueFileName = `${uuidv4()}-${file.name}`; // Generar un nombre único para el archivo
+    const storageRef = ref(storage, `agenda/${uniqueFileName}`); // Subir con el nombre único
+    try {
+      // Subir archivo
+      const snapshot = await uploadBytes(storageRef, file);
+      
+      // Obtener la URL de descarga
+      const downloadURL = await getDownloadURL(snapshot.ref);
+      return downloadURL; // Devolver la URL del PDF
+
+    } catch (error) {
+      console.error('Error al subir el archivo:', error);
+      message.error('Error al subir el archivo.');
     }
-    setFileList(fileList);
   };
 
   const handleSubmitExamen = async () => {
-    if (fileList.length === 0) {
+    if (!file) {
       message.error('Por favor, selecciona un archivo PDF.');
       return;
     }
@@ -51,36 +68,41 @@ export function Examen() {
       message.error('Por favor, proporciona una descripción.');
       return;
     }
-  
-    const formData = new FormData();
-    formData.append('file', fileList[0].originFileObj);
-    formData.append('opcion', opcionSeleccionada);
-    formData.append('descripcion', descripcion);
-    
-    // Agregar CURP al FormData
-    const userCURP = localStorage.getItem("userCURP") || "";
-    formData.append('curp', userCURP);
-  
+
     try {
-      const response = await fetch("http://localhost:3000/submitExamen", {
-        method: 'POST',
-        body: formData
-      });
-  
-      if (response.ok) {
-        message.success('Examen enviado exitosamente.');
-        setFileList([]);
-        setOpcionSeleccionada(null);
-        setDescripcion(""); // Limpiar la descripción
-      } else {
-        message.error('Error al enviar el examen.');
+      const pdfUrl = await uploadFile(file); // Subir el archivo antes de enviar el formulario
+      if (pdfUrl) {
+        const curp = localStorage.getItem("userCURP"); // Obtener la CURP del localStorage
+
+        // Crear un objeto con los datos del examen
+        const examenData = {
+          opcion: opcionSeleccionada,
+          descripcion,
+          curp,
+          pdfUrl // Incluir la URL del PDF
+        };
+
+        // Enviar los datos al backend
+        const response = await fetch("http://localhost:3000/submitExamen", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(examenData)
+        });
+
+        if (response.ok) {
+          message.success('Examen enviado exitosamente.');
+        } else {
+          message.error('Error al enviar el examen.');
+        }
       }
     } catch (error) {
       console.error('Error al enviar el examen:', error);
       message.error('Error al enviar el examen.');
     }
   };
-  
+
   return (
     <>
       <Affix><Header /></Affix>
@@ -136,22 +158,29 @@ export function Examen() {
             </Form.Item>
 
             <Form.Item
-              label="Selecciona un archivo PDF"
+              label="Selecciona el primer archivo PDF"
               required
               style={{ marginBottom: '24px' }}
             >
-              <Upload
-                accept="application/pdf"
-                fileList={fileList}
-                onChange={handleFileChange}
-                beforeUpload={() => false} // Evitar la carga automática de archivos
-                maxCount={1} // Limitar a 1 archivo
-                showUploadList={{ showPreviewIcon: false }} // Ocultar íconos de vista previa
-              >
+              <div>
                 <Button icon={<PlusOutlined />} style={{ width: '100%' }}>
                   Seleccionar PDF
+                  <input
+                    type="file"
+                    accept="application/pdf"
+                    onChange={e => setFile(e.target.files[0])} // Guardar archivo seleccionado
+                    style={{
+                      opacity: 0,
+                      position: 'absolute',
+                      left: 0,
+                      top: 0,
+                      width: '100%',
+                      height: '100%',
+                      cursor: 'pointer'
+                    }}
+                  />
                 </Button>
-              </Upload>
+              </div>
             </Form.Item>
 
             <Form.Item>

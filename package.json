@@ -53,6 +53,7 @@
     "tailwindcss": "^3.3.5",
     "tw-elements-react": "^1.0.0-alpha2",
     "twilio": "^4.21.0",
+    "uuid": "^10.0.0",
     "victory": "^37.0.2",
     "vite-plugin-windicss": "^1.9.2",
     "xlsx": "^0.18.5"
