@@ -188,25 +188,7 @@ export function Login() {
               </Link>
             </div>
 
-            <Form.Item
-              name="recaptcha"
-              rules={[
-                {
-                  validator: async (_, value) => {
-                    if (!value) {
-                      throw new Error("Por favor, completa el reCAPTCHA");
-                    }
-                  },
-                },
-              ]}
-            >
-              <ReCAPTCHA
-                // local sitekey="6LfPh4UpAAAAADrQnchMkx5WoF9InHXo0jYAt2JC"
-                sitekey="6Lflo2wqAAAAAK-WR8SviHWt7H_7HmpFwhwX25Cg"
-                onChange={onChange}
-              />
-            </Form.Item>
-
+         
             {messageText && (
               <p style={{ color: "red", textAlign: "center" }}>{messageText}</p>
             )}
@@ -229,8 +211,7 @@ export function Login() {
                 loading={buttonLoading}
                 disabled={
                   !formValues.curp ||
-                  !formValues.contrasena ||
-                  !formValues.recaptcha ||
+                  !formValues.contrasena || 
                   buttonBlocked ||
                   buttonLoading
                 }
