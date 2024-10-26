@@ -403,7 +403,7 @@ const downloadPDF = async (datos) => {
 
 const obtenerGrado_Grupo = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/ObtenerGruGra");
+    const response = await axios.get("https://servidor-zonadoce.vercel.app/ObtenerGruGra");
     console.log("Datos obtenidos:", response.data);
     return response.data; // Devuelve los datos obtenidos para usarlos en otra parte del código
   } catch (error) {

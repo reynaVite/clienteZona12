@@ -23,7 +23,7 @@ export function Examen() {
   useEffect(() => {
     const fetchMaterias = async () => {
       try {
-        const response = await fetch("http://localhost:3000/getMaterias");
+        const response = await fetch("https://servidor-zonadoce.vercel.app/getMaterias");
         const data = await response.json();
         setMaterias(data);
       } catch (error) {
@@ -40,7 +40,7 @@ export function Examen() {
     if (!file) return;
 
     const uniqueFileName = `${uuidv4()}-${file.name}`; // Generar un nombre único para el archivo
-    const storageRef = ref(storage, `agenda/${uniqueFileName}`); // Subir con el nombre único
+    const storageRef = ref(storage, `examen/${uniqueFileName}`); // Subir con el nombre único
     try {
       // Subir archivo
       const snapshot = await uploadBytes(storageRef, file);
@@ -83,7 +83,7 @@ export function Examen() {
         };
 
         // Enviar los datos al backend
-        const response = await fetch("http://localhost:3000/submitExamen", {
+        const response = await fetch("https://servidor-zonadoce.vercel.app/submitExamen", {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

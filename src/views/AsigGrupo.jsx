@@ -48,7 +48,7 @@ export function AsigGrupo() {
             console.log("Plantel enviado al backend:", userPlantel); // Consola para ver el valor
     
             // Realiza la solicitud GET con el plantel como parámetro
-            const response = await axios.get("http://localhost:3000/grupogradoDispo", {
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/grupogradoDispo", {
                 params: { plantel: userPlantel } // Enviar plantel como parámetro
             });
     
@@ -62,7 +62,7 @@ export function AsigGrupo() {
     
     const obtenerRegistros = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/docentes_asignacion", {
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/docentes_asignacion", {
                 params: {
                     plantel: plantel
                 }
@@ -82,7 +82,7 @@ export function AsigGrupo() {
 
     const obtenerGrado = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/grado");
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/grado");
             setGradoOptions(response.data);
         } catch (error) {
             console.error("Error al obtener valores de grados:", error);
@@ -91,7 +91,7 @@ export function AsigGrupo() {
 
     const obtenerGrupo = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/grupo");
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/grupo");
             setGrupoOptions(response.data);
         } catch (error) {
             console.error("Error al obtener valores de grupos:", error);
@@ -112,7 +112,7 @@ export function AsigGrupo() {
  
         try {
             // Verificar si la CURP ya tiene una asignación
-            const verificarResponse = await axios.get("http://localhost:3000/verificar_registros_curp", {
+            const verificarResponse = await axios.get("https://servidor-zonadoce.vercel.app/verificar_registros_curp", {
                 params: {
                     curp: selectedUser.curp
                 }
@@ -124,7 +124,7 @@ export function AsigGrupo() {
             }
 
             // Verificar si el grado y grupo en el plantel ya están asignados
-            const verificarGradoGrupoResponse = await axios.get("http://localhost:3000/verificar_asignacion_grado_grupo", {
+            const verificarGradoGrupoResponse = await axios.get("https://servidor-zonadoce.vercel.app/verificar_asignacion_grado_grupo", {
                 params: {
                     plantelId: selectedUser.plantel,
                     grupo: values.grupo,
@@ -138,7 +138,7 @@ export function AsigGrupo() {
             }
 
             // Realizar la asignación del docente
-            const response = await axios.post("http://localhost:3000/asignar_grupo_grado", {
+            const response = await axios.post("https://servidor-zonadoce.vercel.app/asignar_grupo_grado", {
                 docenteId: selectedUser.curp,
                 grupo: values.grupo,
                 grado: values.grado,
@@ -151,7 +151,7 @@ export function AsigGrupo() {
                 message.success("Docente asignado correctamente");
 
                 // Insertar la CURP del docente en la tabla de alumnos
-                const insertarDocenteCurpResponse = await axios.post("http://localhost:3000/insertar_docente_curp_alumnos", {
+                const insertarDocenteCurpResponse = await axios.post("https://servidor-zonadoce.vercel.app/insertar_docente_curp_alumnos", {
                     curp: selectedUser.curp,
                     plantelId: selectedUser.plantel,
                     grupo: values.grupo,

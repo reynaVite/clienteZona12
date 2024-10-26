@@ -14,7 +14,7 @@ export function ModificarEliminarRegistros() {
   useEffect(() => {
     const obtenerRegistros = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/rezagoAlumno");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/rezagoAlumno");
         setRegistros(response.data);
       } catch (error) {
         console.error("Error al obtener registros:", error);
@@ -36,7 +36,7 @@ export function ModificarEliminarRegistros() {
   const handleUpdate = async (values) => {
     try {
       await axios.put(
-        `http://localhost:3000/rezagoAlumno/${values.idAlumnos}`,
+        `https://servidor-zonadoce.vercel.app/rezagoAlumno/${values.idAlumnos}`,
         values
       );
       message.success("Registro actualizado correctamente.");
@@ -56,7 +56,7 @@ export function ModificarEliminarRegistros() {
 
   const handleDelete = async (idAlumnos) => {
     try {
-      await axios.delete(`http://localhost:3000/rezagoAlumno/${idAlumnos}`);
+      await axios.delete(`https://servidor-zonadoce.vercel.app/rezagoAlumno/${idAlumnos}`);
       message.success("Registro eliminado correctamente.");
       setRegistros((prevRegistros) =>
         prevRegistros.filter((reg) => reg.idAlumnos !== idAlumnos)

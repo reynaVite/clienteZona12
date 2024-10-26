@@ -26,7 +26,7 @@ export function Agenda() {
 
   const obtenerValoresSesion = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/sesiones");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/sesiones");
       setSesionOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de la sesión:", error);
@@ -40,7 +40,7 @@ export function Agenda() {
       const formattedFecha = fecha.format('YYYY-MM-DD');
       const formattedHora = hora.format('HH:mm:ss');
 
-      await axios.post("http://localhost:3000/guardarAgenda", {
+      await axios.post("https://servidor-zonadoce.vercel.app/guardarAgenda", {
         titulo: titulo,
         descripcion: descripcion,
         asignacion: asignacion,

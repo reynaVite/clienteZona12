@@ -42,7 +42,7 @@ export function Solicitud() {
 
   const obtenerValoresPlantel = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/plantel");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/plantel");
       setPlantelOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores del plantel:", error);
@@ -51,7 +51,7 @@ export function Solicitud() {
 
   const obtenerValoresSesion = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/sesiones");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/sesiones");
       setSesionOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de sesiones:", error);
@@ -82,25 +82,25 @@ export function Solicitud() {
 
       // Verificar si la CURP ya existe en la base de datos (primera verificación)
       const curpExistsInSoli = await axios.post(
-        "http://localhost:3000/verificar-curpSoli",
+        "https://servidor-zonadoce.vercel.app/verificar-curpSoli",
         { curp: values.curp }
       );
 
       // Verificar si la CURP ya existe en otra ruta (segunda verificación)
       const curpExists = await axios.post(
-        "http://localhost:3000/verificar-curp",
+        "https://servidor-zonadoce.vercel.app/verificar-curp",
         { curp: values.curp }
       );
 
       // Verificar si el correo ya existe en la tabla de registros (tercera verificación)
       const correoExists = await axios.post(
-        "http://localhost:3000/verificar-correo",
+        "https://servidor-zonadoce.vercel.app/verificar-correo",
         { correo: values.correo }
       );
 
       // Verificar si el correo ya existe en la tabla de registrosoli (cuarta verificación)
       const correoExistsInSoli = await axios.post(
-        "http://localhost:3000/verificar-correoSoli",
+        "https://servidor-zonadoce.vercel.app/verificar-correoSoli",
         { correo: values.correo }
       );
       if (curpExistsInSoli.data.exists) {
@@ -118,7 +118,7 @@ export function Solicitud() {
       } else {
         // Todas las verificaciones pasaron, realizar la solicitud al servidor para insertar los datos
         const response = await axios.post(
-          "http://localhost:3000/insertar-solicitud",
+          "https://servidor-zonadoce.vercel.app/insertar-solicitud",
           dataToInsert
         );
         message.success(

@@ -28,7 +28,7 @@ export function AdminSol() {
  
     const obtenerRegistros = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/registroSol");
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/registroSol");
             setRegistros(response.data);
             setLoading(false);
         } catch (error) {
@@ -46,7 +46,7 @@ export function AdminSol() {
             okButtonProps: { style: { color: 'black' } }, 
             async onOk() {
                 try {
-                    const respuesta = await axios.get(`http://localhost:3000/registroSolAcep?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://servidor-zonadoce.vercel.app/registroSolAcep?curp=${record.curp}`);
                     const datos = respuesta.data;
                     message.success("La solicitud ha sido aceptada con éxito.");
                     obtenerRegistros();
@@ -70,7 +70,7 @@ export function AdminSol() {
             okButtonProps: { style: { color: 'black' } }, 
             async onOk() {
                 try {
-                    const respuesta = await axios.get(`http://localhost:3000/registroSolCan?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://servidor-zonadoce.vercel.app/registroSolCan?curp=${record.curp}`);
                     const datos = respuesta.data;
                     message.success("La solicitud ha sido rechazada con éxito. ");
                     obtenerRegistros();

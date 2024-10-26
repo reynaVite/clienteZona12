@@ -23,7 +23,7 @@ export function ReContraseña() {
   const onFinish = async (values) => {
     try {
       const curpExistsResponse = await axios.post(
-        "http://localhost:3000/verificar-curp",
+        "https://servidor-zonadoce.vercel.app/verificar-curp",
         {
           curp: values.curp,
         }

@@ -2,100 +2,20 @@ import { useNavigate } from "react-router-dom";
 import React, { useRef, useState } from "react";
 import axios from "axios";
 import { Header } from "../components/Header";
-
-
-
-import { uploadFile } from "../firebase/config";//
-
-
-
-
-
-
 import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
 import { ScrollToTop } from "../components/ScrollToTop";
-import { Form, Input, Button, Select, message, notification } from "antd";
-import {
-  CheckCircleOutlined,
-  LockOutlined,
-  IdcardOutlined,
-} from "@ant-design/icons";
+import { Form, Input, Button, Select, message } from "antd";
+import {CheckCircleOutlined, LockOutlined} 
+from "@ant-design/icons";
 import { Subtitulo, Contenido } from "../components/Titulos";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import imagen from "../img/Si.jpg";
-
 const { Option } = Select;
-
-
  
-
-
-
 export function Login() {
-  // Estado para manejar la cámara y la imagen capturada
-const [imageSrc, setImageSrc] = useState(null);
-const videoRef = useRef(null);
-const canvasRef = useRef(null);
-
-const startCamera = () => {
-  navigator.mediaDevices.getUserMedia({ video: true })
-    .then((stream) => {
-      videoRef.current.srcObject = stream;
-    })
-    .catch((err) => {
-      console.error("Error al acceder a la cámara: ", err);
-    });
-};
-
-const capturePhoto = () => {
-  const canvas = canvasRef.current;
-  const video = videoRef.current;
-  const context = canvas.getContext("2d");
-
-  // Dibujar el frame actual del video en el canvas
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-  // Convertir la imagen del canvas a formato data URL (base64)
-  const imageDataUrl = canvas.toDataURL("image/png");
-  setImageSrc(imageDataUrl);
-
-  // Convertir la imagen a Blob para subirla a Firebase Storage
-  canvas.toBlob((blob) => {
-    uploadFile(blob); // Subir la imagen capturada a Firebase Storage
-  }, "image/png");
-};
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  
 
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
@@ -106,11 +26,7 @@ const capturePhoto = () => {
   const handleFormValuesChange = (changedValues, allValues) => {
     setFormValues(allValues);
   };
-
-  {
  
-  }
-
   const [userRole, setUserRole] = useState(null);
   const onChange = () => {
     console.log("Recapcha");
@@ -127,7 +43,7 @@ const capturePhoto = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/login",
+        "https://servidor-zonadoce.vercel.app/login",
         {
           curp: values.curp,
           contrasena: values.contrasena,
@@ -138,7 +54,7 @@ const capturePhoto = () => {
         console.log("Inicio de sesión exitoso");
         message.success("Inicio de sesión exitoso");
         localStorage.setItem("userRole", response.data.role);
-        localStorage.setItem("userCURP", formValues.curp); 
+        localStorage.setItem("userCURP", formValues.curp);
         localStorage.setItem("userPlantel", response.data.plantel);
 
 
@@ -162,7 +78,7 @@ const capturePhoto = () => {
           try {
             message.error("Cuenta bloqueada.");
             await axios.post(
-              "http://localhost:3000/updateEstadoCuenta",
+              "https://servidor-zonadoce.vercel.app/updateEstadoCuenta",
               {
                 curp: values.curp,
               }
@@ -188,190 +104,151 @@ const capturePhoto = () => {
   };
   return (
     <>
-
-    
       <CSPMetaTag />
       <Header />
       <main className="grid lg:grid-cols-12 gap-4 md:grid-cols-12 celular:grid-cols-12">
-  <ScrollToTop />
+        <ScrollToTop />
+    
+        {/* Formulario - Ocupa 5/12 columnas en pantallas grandes y 12/12 en celulares */}
+        <div className="lg:col-span-5 mx-10 md:col-span-7 celular:col-span-12">
+          <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-center">
+            Ingresa a tu cuenta
+          </h2>
+          <Form
+            name="loginForm"
+            className="flex flex-col w-auto mt-10"
+            form={form}
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+            onValuesChange={handleFormValuesChange}
+          >
+            <Contenido conTit={"Ingrese su CURP:"} />
+            <Form.Item
+              name="curp"
+              className="text-xl"
+              rules={[
+                {
+                  validator: async (_, value) => {
+                    if (!value || typeof value !== "string") {
+                      throw new Error("Ingrese su CURP");
+                    }
+                    const trimmedValue = value.trim();
+                    if (/[a-z]/.test(trimmedValue)) {
+                      throw new Error("La CURP solo debe contener mayúsculas");
+                    }
+                    const uppercasedValue = trimmedValue.toUpperCase();
+                    const pattern = /^[A-Z]{4}\d{6}[HM]{1}[A-Z\d]{5}[0-9A-Z]{2}$/;
+                    if (uppercasedValue.length !== 18) {
+                      throw new Error(
+                        "La CURP debe tener 18 letras mayúsculas/números)"
+                      );
+                    }
+                    if (!pattern.test(uppercasedValue)) {
+                      throw new Error("La CURP no es válida");
+                    }
+                    if (value !== trimmedValue) {
+                      throw new Error(
+                        "La CURP no debe contener espacios al inicio, en medio o al final"
+                      );
+                    }
+                  },
+                },
+              ]}
+            >
+              <Input
+                prefix={<CheckCircleOutlined />}
+                placeholder="Ejemplo: MAPA850210MVERXXA1"
+                className="lg:w-full mb-5 py-2 px-3 mt-1 text-base shadow-md "
+              />
+            </Form.Item>
 
+            <Contenido conTit={"Contraseña:"} />
+            <Form.Item
+              name="contrasena"
+              rules={[
+                {
+                  required: true,
+                  message: "Ingrese su contraseña",
+                },
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                placeholder="Ingrese su contraseña"
+                className="lg:w-full mb-5 py-2 px-3 mt-1 text-base shadow-md"
+              />
+            </Form.Item>
 
+            <div className="w-fit">
+              <Link to="/ReContraseña">
+                <p className="text-base py-5 -mt-10 hover:scale-110 hover:translate-x-2">
+                  ¿Olvidó su contraseña?
+                </p>
+              </Link>
+            </div>
 
+            <Form.Item
+              name="recaptcha"
+              rules={[
+                {
+                  validator: async (_, value) => {
+                    if (!value) {
+                      throw new Error("Por favor, completa el reCAPTCHA");
+                    }
+                  },
+                },
+              ]}
+            >
+              <ReCAPTCHA
+                sitekey="6LfPh4UpAAAAADrQnchMkx5WoF9InHXo0jYAt2JC"
+                onChange={onChange}
+              />
+            </Form.Item>
 
+            {messageText && (
+              <p style={{ color: "red", textAlign: "center" }}>{messageText}</p>
+            )}
 
+            {buttonBlocked && (
+              <div style={{ color: "red", marginTop: "10px" }}>
+                Su cuenta ha sido bloqueada. Revise su correo para instrucciones de
+                recuperación.
+              </div>
+            )}
 
-
-
-
-
- 
-<br></br>
-<div>
-    <h3>Capturar Foto</h3>
-    <video ref={videoRef} autoPlay style={{ width: '100%', height: 'auto' }}></video>
-    <canvas ref={canvasRef} style={{ display: 'none' }}></canvas>
-    <Button onClick={startCamera} type="primary">Iniciar Cámara</Button>
-    <Button onClick={capturePhoto} type="primary" style={{ marginLeft: '10px' }}>
-      Capturar Foto
-    </Button>
-    {imageSrc && <img src={imageSrc} alt="Captura" style={{ marginTop: '10px' }} />}
-  </div>
-
-
-
-  <div>
-    <input type='file' onChange={e=> uploadFile(e.target.files[0])}></input>
-   </div>
-
-
-
-
-  
-
-   
-  
-  {/* Formulario - Ocupa 5/12 columnas en pantallas grandes y 12/12 en celulares */}
-  <div className="lg:col-span-5 mx-10 md:col-span-7 celular:col-span-12">
-    <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-center">
-      Ingresa a tu cuenta
-    </h2>
-    <Form
-      name="loginForm"
-      className="flex flex-col w-auto mt-10"
-      form={form}
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      onValuesChange={handleFormValuesChange}
-    >
-      <Contenido conTit={"Ingrese su CURP:"} />
-      <Form.Item
-        name="curp"
-        className="text-xl"
-        rules={[
-          {
-            validator: async (_, value) => {
-              if (!value || typeof value !== "string") {
-                throw new Error("Ingrese su CURP");
-              }
-              const trimmedValue = value.trim();
-              if (/[a-z]/.test(trimmedValue)) {
-                throw new Error("La CURP solo debe contener mayúsculas");
-              }
-              const uppercasedValue = trimmedValue.toUpperCase();
-              const pattern = /^[A-Z]{4}\d{6}[HM]{1}[A-Z\d]{5}[0-9A-Z]{2}$/;
-              if (uppercasedValue.length !== 18) {
-                throw new Error(
-                  "La CURP debe tener 18 letras mayúsculas/números)"
-                );
-              }
-              if (!pattern.test(uppercasedValue)) {
-                throw new Error("La CURP no es válida");
-              }
-              if (value !== trimmedValue) {
-                throw new Error(
-                  "La CURP no debe contener espacios al inicio, en medio o al final"
-                );
-              }
-            },
-          },
-        ]}
-      >
-        <Input
-          prefix={<CheckCircleOutlined />}
-          placeholder="Ejemplo: MAPA850210MVERXXA1"
-          className="lg:w-full mb-5 py-2 px-3 mt-1 text-base shadow-md "
-        />
-      </Form.Item>
-
-      <Contenido conTit={"Contraseña:"} />
-      <Form.Item
-        name="contrasena"
-        rules={[
-          {
-            required: true,
-            message: "Ingrese su contraseña",
-          },
-        ]}
-      >
-        <Input.Password
-          prefix={<LockOutlined />}
-          placeholder="Ingrese su contraseña"
-          className="lg:w-full mb-5 py-2 px-3 mt-1 text-base shadow-md"
-        />
-      </Form.Item>
-
-      <div className="w-fit">
-        <Link to="/ReContraseña">
-          <p className="text-base py-5 -mt-10 hover:scale-110 hover:translate-x-2">
-            ¿Olvidó su contraseña?
-          </p>
-        </Link>
-      </div>
-
-      <Form.Item
-        name="recaptcha"
-        rules={[
-          {
-            validator: async (_, value) => {
-              if (!value) {
-                throw new Error("Por favor, completa el reCAPTCHA");
-              }
-            },
-          },
-        ]}
-      >
-        <ReCAPTCHA
-          sitekey="6LfPh4UpAAAAADrQnchMkx5WoF9InHXo0jYAt2JC"
-          onChange={onChange}
-        />
-      </Form.Item>
-
-      {messageText && (
-        <p style={{ color: "red", textAlign: "center" }}>{messageText}</p>
-      )}
-
-      {buttonBlocked && (
-        <div style={{ color: "red", marginTop: "10px" }}>
-          Su cuenta ha sido bloqueada. Revise su correo para instrucciones de
-          recuperación.
-        </div>
-      )}
-
-      <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="bg-blue_uno text-white h-11 text-lg w-full
+            <Form.Item>
+              <Button
+                type="primary"
+                htmlType="submit"
+                className="bg-blue_uno text-white h-11 text-lg w-full
           hover-text-grays
           md:w-2/4
           celular:w-full celular:mb-5 celular:mt-3"
-          loading={buttonLoading}
-          disabled={
-            !formValues.curp ||
-            !formValues.contrasena ||
-            !formValues.recaptcha ||
-            buttonBlocked ||
-            buttonLoading
-          }
-        >
-          Ingresar
-        </Button>
-      </Form.Item>
-    </Form>
-  </div>
+                loading={buttonLoading}
+                disabled={
+                  !formValues.curp ||
+                  !formValues.contrasena ||
+                  !formValues.recaptcha ||
+                  buttonBlocked ||
+                  buttonLoading
+                }
+              >
+                Ingresar
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
 
-  {/* Imagen - Oculta en pantallas pequeñas y se muestra solo en pantallas grandes */}
-  <div className="hidden lg:block lg:col-span-7">
-    <img
-      src={imagen}
-      alt=""
-      className="w-full object-cover h-full"
-    />
-  </div>
-</main>
-
-
+        {/* Imagen - Oculta en pantallas pequeñas y se muestra solo en pantallas grandes */}
+        <div className="hidden lg:block lg:col-span-7">
+          <img
+            src={imagen}
+            alt=""
+            className="w-full object-cover h-full"
+          />
+        </div>
+      </main>
       <Footer />
     </>
   );

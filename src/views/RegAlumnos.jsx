@@ -59,7 +59,7 @@ export function Regalu() {
       return; // Detener la función si los datos no son válidos
     }
     try {
-      const response = await fetch('http://localhost:3000/verificar-asignacion', {// Verificar si el usuario tiene una asignación haciendo una solicitud HTTP
+      const response = await fetch('https://servidor-zonadoce.vercel.app/verificar-asignacion', {// Verificar si el usuario tiene una asignación haciendo una solicitud HTTP
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -79,7 +79,7 @@ export function Regalu() {
         console.log("Datos que se enviarán al backend:", dataToSend);
 
         // Verificar duplicados antes de enviar los datos al backend
-        const duplicadosResponse = await fetch('http://localhost:3000/verificar-duplicados', {
+        const duplicadosResponse = await fetch('https://servidor-zonadoce.vercel.app/verificar-duplicados', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -102,7 +102,7 @@ export function Regalu() {
 
         } else {// No se encontraron duplicados, continuar con el registro de alumnos
           setButtonLoading(true); // Activar el estado de carga del botón
-          const registroResponse = await fetch('http://localhost:3000/registrar-alumnos', {
+          const registroResponse = await fetch('https://servidor-zonadoce.vercel.app/registrar-alumnos', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -150,7 +150,7 @@ export function Regalu() {
 
   const props = {
     name: "file",
-    action: "http://localhost:3000/upload",
+    action: "https://servidor-zonadoce.vercel.app/upload",
     maxCount: 1,
     onChange(info) {
       const { status } = info.file;

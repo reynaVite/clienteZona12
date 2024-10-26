@@ -45,7 +45,7 @@ export function Re2Contraseña() {
     try {
       const { correo, token } = formValues;
       // Realizar la solicitud al servidor para verificar el token
-      const response = await axios.post("http://localhost:3000/verificar-codigo", {
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/verificar-codigo", {
         curp, token,
       });
       if (response.data.valid) {
@@ -62,7 +62,7 @@ export function Re2Contraseña() {
   const handleGenerarToken = async () => {
     try {
       setGeneratingCode(true); // Establecer el estado como verdadero al iniciar la generación del código
-      const response = await axios.post("http://localhost:3000/generar-token-y-enviar-correo", { curp });
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/generar-token-y-enviar-correo", { curp });
       setToken(response.data.token);
       message.success("Código generado y enviado por correo");
     } catch (error) {
@@ -167,7 +167,7 @@ export function Re2Contraseña() {
     }
 
     try {
-      const response = await axios.get(`http://localhost:3000/obtener-datos-usuario/${curp}`);
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/obtener-datos-usuario/${curp}`);
       if (response.data.nombre) {
         const { nombre, aPaterno, aMaterno } = response.data;
         setUserName(`${nombre} ${aPaterno} ${aMaterno}`);
@@ -188,7 +188,7 @@ export function Re2Contraseña() {
   const obtenerPregunta = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/obtener-pregunta/${curp}`
+        `https://servidor-zonadoce.vercel.app/obtener-pregunta/${curp}`
       );
       if (response.data.pregunta) {
         const { pregunta } = response.data;
@@ -204,7 +204,7 @@ export function Re2Contraseña() {
   const obtenerTipoPregunta = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/obtener-tipo-pregunta/${pregunta}`
+        `https://servidor-zonadoce.vercel.app/obtener-tipo-pregunta/${pregunta}`
       );
       if (response.data.tipo_pregunta) {
         const { tipo_pregunta } = response.data;
@@ -218,7 +218,7 @@ export function Re2Contraseña() {
   const obtenerCorreo = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/obtener-correo/${curp}`
+        `https://servidor-zonadoce.vercel.app/obtener-correo/${curp}`
       );
       if (response.data.correo) {
         const { correo } = response.data;
@@ -240,7 +240,7 @@ export function Re2Contraseña() {
       console.log("", values);
       if (tipoRecuperacion === "pregunta") {
         const response = await axios.post(
-          "http://localhost:3000/recuperar-contrasena",
+          "https://servidor-zonadoce.vercel.app/recuperar-contrasena",
           {
             curp,
             respuesta: values.respuesta,
@@ -271,7 +271,7 @@ export function Re2Contraseña() {
   const onFinishActualizarContraseña = async (values) => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/actualizar-contrasena",
+        "https://servidor-zonadoce.vercel.app/actualizar-contrasena",
         {
           curp,
           contrasenaActual: values.contrasenaActual,

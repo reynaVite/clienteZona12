@@ -130,7 +130,7 @@ const downloadPDF = async (datos) => {
 
 const obtenerDatos = async () => {
   try {
-    const response = await axios.get("http://localhost:3000/rezagoAlumno");
+    const response = await axios.get("https://servidor-zonadoce.vercel.app/rezagoAlumno");
     console.log("Datos obtenidos:", response.data);
     return response.data;
   } catch (error) {

@@ -109,7 +109,7 @@ export function RegistroF() {
   const obtenerValoresPreguntasSecretas = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/preguntas-secretas"
+        "https://servidor-zonadoce.vercel.app/preguntas-secretas"
       );
       setPreguntasSecretasOptions(response.data);
     } catch (error) {
@@ -133,7 +133,7 @@ export function RegistroF() {
         curp: values.curp,
       };
 
-      const response = await axios.post('http://localhost:3000/verificar-curp-contra', { curp: values.curp });
+      const response = await axios.post('https://servidor-zonadoce.vercel.app/verificar-curp-contra', { curp: values.curp });
 
       if (response.data.exists) {
         if (response.data.emptyPassword) {
@@ -173,7 +173,7 @@ export function RegistroF() {
         curp: curp, // Utiliza la CURP almacenada en el estado como ID
       };
 
-      const response = await axios.post('http://localhost:3000/insertar-dato2', dataToInsert);
+      const response = await axios.post('https://servidor-zonadoce.vercel.app/insertar-dato2', dataToInsert);
       message.success('Registro exitoso');
       navigate('/Login');
 

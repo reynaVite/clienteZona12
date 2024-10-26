@@ -18,7 +18,7 @@ export function Entregados() {
 
   const obtenerActEntre = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/consultarPDF");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/consultarPDF");
       setActividadesEntregadas(response.data); 
     } catch (error) {
       console.error("Error al obtener actividades entregadas:", error);
@@ -39,7 +39,7 @@ export function Entregados() {
 
   const verPDF = async (id) => {
     try {
-      const response = await axios.get(`http://localhost:3000/obtenerPDF/${id}`, {
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/obtenerPDF/${id}`, {
         responseType: 'blob'
       });
       const url = window.URL.createObjectURL(new Blob([response.data], { type: "application/pdf" }));

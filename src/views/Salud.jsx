@@ -61,7 +61,7 @@ export function Salud() {
   
   const obtenerCategorias = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categoria");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/categoria");
       setCategorias(response.data); // Establece las categorías en el estado
       setcategotriOptions(response.data);
     } catch (error) {
@@ -75,7 +75,7 @@ export function Salud() {
 
   const obtenerValorCategorias = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/valorCategoria");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/valorCategoria");
       setcategoValtriOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de las categorias:", error);
@@ -85,7 +85,7 @@ export function Salud() {
   useEffect(() => {
     const obtenerAlergias = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/alergias");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/alergias");
         setAlergiasOptions(response.data);
       } catch (error) {
         console.error("Error al obtener datos de alergias:", error);
@@ -98,7 +98,7 @@ export function Salud() {
   useEffect(() => {
     const obtenerVacunas = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/vacunas");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/vacunas");
         setVacunasOptions(response.data);
       } catch (error) {
         console.error("Error al obtener datos de vacunas:", error);
@@ -121,7 +121,7 @@ export function Salud() {
       return;
     }
     try {
-      await axios.post("http://localhost:3000/Insercategorias", {
+      await axios.post("https://servidor-zonadoce.vercel.app/Insercategorias", {
         categoria: catego.trim(),
         valor: categovalModal.trim()
       });
@@ -158,10 +158,10 @@ export function Salud() {
   
       // Validar si los datos ya existen en la base de datos antes de insertar
       await Promise.all(datosSalud.map(async dato => {
-        const response = await axios.post("http://localhost:3000/verificarSalAlumn", dato);
+        const response = await axios.post("https://servidor-zonadoce.vercel.app/verificarSalAlumn", dato);
         // Verificar si ya existen datos con el mismo idAlumnos y categoria
         if (!response.data.exists) {
-          await axios.post("http://localhost:3000/guardarDatosSalud", dato);
+          await axios.post("https://servidor-zonadoce.vercel.app/guardarDatosSalud", dato);
           datosNuevosGuardados = true; // Se ha guardado al menos un dato nuevo
         } else {
           datosExistentes.push({
@@ -197,7 +197,7 @@ export function Salud() {
         console.log("Opciones seleccionadas de discapacidades:", opcionesSeleccionadasCheck);
 
         // Verificar si los datos ya existen en la base de datos
-        const response = await axios.post("http://localhost:3000/verificarDiscapacidades", {
+        const response = await axios.post("https://servidor-zonadoce.vercel.app/verificarDiscapacidades", {
             idAlumnos: idAlumnos,
             opcionesDiscapacitados: opcionesSeleccionadasCheck
         });
@@ -209,7 +209,7 @@ export function Salud() {
             message.warning(`La(s) siguiente(s) discapacidad(es) ya están registrada(s): ${opcionesRegistradas}`);
         } else {
             // Los datos no existen en la base de datos, insertar nuevos datos
-            await axios.post("http://localhost:3000/guardarDiscapacidades", {
+            await axios.post("https://servidor-zonadoce.vercel.app/guardarDiscapacidades", {
                 idAlumnos: idAlumnos,
                 opcionesDiscapacitados: opcionesSeleccionadasCheck
             });
@@ -233,7 +233,7 @@ export function Salud() {
         console.log("ID del alumno:", idAlumnos);
         console.log("Opciones seleccionadas de alergias:", opcionesSeleccionadasAlergias);
 
-        const response = await axios.post("http://localhost:3000/verificarAlergias", {
+        const response = await axios.post("https://servidor-zonadoce.vercel.app/verificarAlergias", {
             idAlumnos: idAlumnos,
             opcionesAlergias: opcionesSeleccionadasAlergias
         });
@@ -242,7 +242,7 @@ export function Salud() {
             const alergiasRegistradas = response.data.alergiasRegistradas.join(', ');
             message.warning(`La(s) siguiente(s) alergia(s) ya están registrada(s): ${alergiasRegistradas}`);
         } else {
-            await axios.post("http://localhost:3000/guardarAlergias", {
+            await axios.post("https://servidor-zonadoce.vercel.app/guardarAlergias", {
                 idAlumnos: idAlumnos,
                 opcionesAlergias: opcionesSeleccionadasAlergias
             });
@@ -264,7 +264,7 @@ export function Salud() {
         console.log("Opciones seleccionadas de vacunas:", opcionesSeleccionadasVacunas);
 
         // Verificar si los datos ya existen en la base de datos
-        const response = await axios.post("http://localhost:3000/verificarVacunas", {
+        const response = await axios.post("https://servidor-zonadoce.vercel.app/verificarVacunas", {
             idAlumnos: idAlumnos,
             opcionesVacunas: opcionesSeleccionadasVacunas
         });
@@ -276,7 +276,7 @@ export function Salud() {
             message.warning(`La(s) siguiente(s) vacuna(s) ya están registrada(s): ${vacunasRegistradas}`);
         } else {
             // Los datos no existen en la base de datos, insertar nuevos datos
-            await axios.post("http://localhost:3000/guardarVacunas", {
+            await axios.post("https://servidor-zonadoce.vercel.app/guardarVacunas", {
                 idAlumnos: idAlumnos,
                 opcionesVacunas: opcionesSeleccionadasVacunas
             });
@@ -335,7 +335,7 @@ export function Salud() {
 
   const obtenerOpcionesCheck = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/discapacidad");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/discapacidad");
       setOpcionesCheck(response.data);
     } catch (error) {
       console.error("Error al obtener datos de discapacidades:", error);
@@ -389,7 +389,7 @@ export function Salud() {
   useEffect(() => {
     const obtenerRegistros = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/alumnos");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/alumnos");
         console.log("Respuesta del servidor:", response);
         const registrosOrdenados = ordenarRegistrosPorNombre(response.data); // Ordena los registros
         setRegistros(registrosOrdenados); // Establece los registros ordenados en el estado

@@ -56,7 +56,7 @@ export function Asignados() {
 
     const obtenerRegistros = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/asignaciong", {
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/asignaciong", {
                 params: {
                     plantel: plantel 
                 }
@@ -76,7 +76,7 @@ export function Asignados() {
 
     const obtenerGrado = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/grado");
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/grado");
             setGradoOptions(response.data); 
         } catch (error) {
             console.error("Error al obtener valores de grados:", error);
@@ -85,7 +85,7 @@ export function Asignados() {
 
     const obtenerGrupo = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/grupo"); 
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/grupo"); 
             setGrupoOptions(response.data);  
         } catch (error) {
             console.error("Error al obtener valores de grupos:", error);
@@ -121,7 +121,7 @@ export function Asignados() {
     
         try {
             // Verificar si el grado y grupo ya están asignados al docente en la base de datos
-            const verificarAsignacionResponse = await axios.get("http://localhost:3000/verificar_asignacionGG", {
+            const verificarAsignacionResponse = await axios.get("https://servidor-zonadoce.vercel.app/verificar_asignacionGG", {
                 params: {  
                     grupo: values.grupo,
                     grado: values.grado
@@ -134,7 +134,7 @@ export function Asignados() {
             }
     
             // Si los registros no existen, proceder con la actualización
-            const response = await axios.post("http://localhost:3000/actualizar_asignacion", {
+            const response = await axios.post("https://servidor-zonadoce.vercel.app/actualizar_asignacion", {
                 docenteId: selectedUser.id, 
                 grupo: values.grupo,
                 grado: values.grado
@@ -163,7 +163,7 @@ export function Asignados() {
         setButtonLoading(true); // Activar el estado de carga del botón
         try {
             
-            const response = await axios.post("http://localhost:3000/borrar_asignacion", {
+            const response = await axios.post("https://servidor-zonadoce.vercel.app/borrar_asignacion", {
                 docenteId: selectedUser.id,
             });
     

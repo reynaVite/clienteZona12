@@ -27,7 +27,7 @@ export function Historial() {
     } else {
       try {
         // Realizar la solicitud HTTP POST a la API para guardar la nueva categoría
-        await axios.post("http://localhost:3000/Insercategorias", {
+        await axios.post("https://servidor-zonadoce.vercel.app/Insercategorias", {
           categoria: categoria.trim()
         });
         message.success("Categoría guardada correctamente.");

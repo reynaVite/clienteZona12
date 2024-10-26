@@ -46,7 +46,7 @@ export function ModA() {
 
   const obtenerRegistros = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/alumnos", {
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/alumnos", {
 
       });
 
@@ -61,7 +61,7 @@ export function ModA() {
 
   const obtenerGrado = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/grado");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/grado");
       setGradoOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de grados:", error);
@@ -70,7 +70,7 @@ export function ModA() {
 
   const obtenerGrupo = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/grupo");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/grupo");
       setGrupoOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de grupos:", error);
@@ -105,7 +105,7 @@ export function ModA() {
     message.loading({ content: 'Actualizando...', key: 'Actualizando' });
   
     try {
-      const response = await axios.post("http://localhost:3000/actualizarAlumno", {
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/actualizarAlumno", {
   
         idAlumnos: selectedUser.idAlumnos,
 
@@ -136,7 +136,7 @@ export function ModA() {
   const borrarFormSubmit = async () => {
     message.loading({ content: 'Borrando...', key: 'Borrando' });
     try {
-      const response = await axios.post("http://localhost:3000/borrarAlumnos", {
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/borrarAlumnos", {
         docenteId: selectedUser.idAlumnos, // Cambia selectedUser.id por selectedUser.idAlumnos
       });
 

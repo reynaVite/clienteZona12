@@ -22,7 +22,7 @@ export function Evidencias() {
 
   const obtenerActividades = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/consultarActividadesId");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/consultarActividadesId");
       console.log("Actividades obtenidas:", response.data);
       setActividades(response.data);
     } catch (error) {

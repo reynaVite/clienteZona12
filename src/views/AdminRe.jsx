@@ -44,10 +44,10 @@ export function AdminRe() {
             okButtonProps: { style: { color: 'black' } },
             async onOk() {
                 try {
-                    const respuesta = await axios.get(`http://localhost:3000/registroBaja?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://servidor-zonadoce.vercel.app/registroBaja?curp=${record.curp}`);
                     const datos = respuesta.data;
                     if (datos.success) {
-                        const response = await axios.post("http://localhost:3000/borrar_asignacionAdmin", {
+                        const response = await axios.post("https://servidor-zonadoce.vercel.app/borrar_asignacionAdmin", {
                             curp: record.curp
                         });
                         if (response.data.success) {
@@ -79,7 +79,7 @@ export function AdminRe() {
             okButtonProps: { style: { color: 'black' } },
             async onOk() {
                 try {
-                    const respuesta = await axios.get(`http://localhost:3000/registroActivar?curp=${record.curp}`);
+                    const respuesta = await axios.get(`https://servidor-zonadoce.vercel.app/registroActivar?curp=${record.curp}`);
                     const datos = respuesta.data;
                     message.success("Cuenta reactivada exitosamente.");
                     obtenerRegistros();
@@ -96,7 +96,7 @@ export function AdminRe() {
 
     const obtenerRegistros = async () => {
         try {
-            const response = await axios.get("http://localhost:3000/registrosB", {
+            const response = await axios.get("https://servidor-zonadoce.vercel.app/registrosB", {
                 params: {
                     pagina: paginaActual,
                     registrosPorPagina: registrosPorPagina,

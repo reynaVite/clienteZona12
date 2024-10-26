@@ -14,7 +14,7 @@ const ExamCatalog = () => {
  
   const obtenerExamenes = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/consultarMaterias");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/consultarMaterias");
       setExams(response.data);
     } catch (error) {
       console.error("Error al obtener valores:", error);

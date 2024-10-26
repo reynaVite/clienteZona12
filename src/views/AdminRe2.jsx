@@ -45,7 +45,7 @@ const usuarioTextos = {
 
 const obtenerRegistros = async () => {
     try {
-        const response = await axios.get("http://localhost:3000/registrosB");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/registrosB");
         // Formatear la fecha y hora antes de establecer los registros
         const registrosFormateados = response.data.map(registro => ({
             ...registro,

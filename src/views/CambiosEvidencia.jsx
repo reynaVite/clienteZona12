@@ -10,6 +10,10 @@ import { Titulo } from "../components/Titulos";
 import { ScrollToTop } from "../components/ScrollToTop";
 import icono from "../img/evidencia.png";
 import "../css/Login.css";
+import { uploadBytes, getDownloadURL, ref } from "firebase/storage"; // Importaciones necesarias de Firebase
+import { storage } from "../firebase/config"; // Importa tu configuración de Firebase
+import { v4 as uuidv4 } from "uuid"; // Importar v4 para generar nombres únicos
+
 
 export function CambiosEvidencia() {
   const [actividades, setActividades] = useState([]);
@@ -20,15 +24,19 @@ export function CambiosEvidencia() {
   useEffect(() => {
     const fetchActividades = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/ConcultarevidenciasPDF");
+        const curp = localStorage.getItem("userCURP") || ""; // Obtener la CURP del usuario
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/ConcultarevidenciasPDF", {
+          params: { curp } // Enviar la CURP como parámetro de consulta
+        });
         setActividades(response.data);
       } catch (error) {
         console.error("Error al obtener actividades:", error);
       }
     };
-
+  
     fetchActividades();
   }, []);
+  
 
   const handleEntregar = (record) => {
     setActividadSeleccionada(record);
@@ -41,7 +49,7 @@ export function CambiosEvidencia() {
 
   const handleEliminar = async (record) => {
     try {
-      await axios.delete(`http://localhost:3000/eliminarEvidencia/${record.id}`);
+      await axios.delete(`https://servidor-zonadoce.vercel.app/eliminarEvidencia/${record.id}`);
       setActividades(actividades.filter(item => item.id !== record.id));
       message.success('Actividad eliminada correctamente');
     } catch (error) {
@@ -55,50 +63,68 @@ export function CambiosEvidencia() {
     setEditModalVisible(true);
   };
 
-  const handleEditarSubmit = async () => {
-    if (fileList.length === 0) {
-      message.error('Por favor, selecciona un archivo PDF para subir.');
-      return;
-    }
 
-    const formData = new FormData();
-    formData.append('file', fileList[0].originFileObj);
-    formData.append('actividadId', actividadSeleccionada.id);
-
+  const uploadFileToFirebase = async (file) => {
+    const uniqueFileName = `${uuidv4()}-${file.name}`; // Genera un nombre único para el archivo
+    const storageRef = ref(storage, `agenda/${uniqueFileName}`); // Sube a la carpeta agenda
     try {
-      await axios.put(`http://localhost:3000/editarEvidencia/${actividadSeleccionada.id}`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      const snapshot = await uploadBytes(storageRef, file); // Sube el archivo a Firebase
+      const downloadURL = await getDownloadURL(snapshot.ref); // Obtén la URL de descarga
+      return downloadURL;
+    } catch (error) {
+      console.error('Error al subir el archivo a Firebase:', error);
+      message.error('Error al subir el archivo a Firebase.');
+      return null;
+    }
+  };
 
-      setEditModalVisible(false);
+  
+
+const handleEditarSubmit = async () => {
+  if (fileList.length === 0) {
+    message.error('Por favor, selecciona un archivo PDF para subir.');
+    return;
+  }
+
+  const file = fileList[0].originFileObj; // Obtén el archivo seleccionado
+  const pdfUrl = await uploadFileToFirebase(file); // Sube el archivo a Firebase y obtén la URL
+
+  if (!pdfUrl) return; // Si no se pudo subir el archivo, detén el proceso
+
+  try {
+    const response = await axios.put(`https://servidor-zonadoce.vercel.app/editarEvidencia/${actividadSeleccionada.id}`, {
+      pdfUrl // Envía la nueva URL del PDF al servidor para que se actualice en la base de datos
+    });
+
+    if (response.status === 200) {
       message.success('Archivo PDF actualizado correctamente');
+      setEditModalVisible(false);
       handleCloseModal();
-    } catch (error) {
-      console.error("Error al actualizar actividad:", error);
-      message.error('Error al actualizar actividad');
+      // Aquí puedes actualizar la lista de actividades o hacer una nueva consulta
+    } else {
+      message.error('Error al actualizar la evidencia.');
     }
-  };
-
-  const handleDescargar = async (record) => {
+  } catch (error) {
+    console.error('Error al actualizar la evidencia:', error);
+    message.error('Error al actualizar la evidencia.');
+  }
+};
+  const handleVerPdf = async (record) => {
     try {
-      const response = await axios.get(`http://localhost:3000/descargarEvidencia/${record.id}`, { responseType: 'blob' });
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/descargarEvidencia/${record.id}`);
       
-      const url = window.URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `evidencia_${record.id}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      
-      // Cleanup the URL object after download
-      window.URL.revokeObjectURL(url);
+      if (response.data && response.data.url) {
+        const url = response.data.url;  // Obtener la URL de Firebase
+        window.open(url, '_blank'); // Abrir la URL en una nueva pestaña
+      } else {
+        message.error('URL del archivo no encontrada');
+      }
     } catch (error) {
-      console.error("Error al descargar archivo:", error);
-      message.error('Error al descargar archivo');
+      console.error("Error al obtener la URL del archivo:", error);
+      message.error('Error al obtener la URL del archivo');
     }
   };
+  
 
   const handleFileChange = ({ file, fileList }) => {
     if (fileList.length > 1) {
@@ -125,11 +151,12 @@ export function CambiosEvidencia() {
         <div>
           <Button onClick={() => handleEditar(record)} icon={<EditOutlined />}>Editar</Button>
           <Button onClick={() => handleEliminar(record)} icon={<DeleteOutlined />}>Eliminar</Button>
-          <Button onClick={() => handleDescargar(record)} icon={<DownloadOutlined />}>Descargar</Button>
+          <Button onClick={() => handleVerPdf(record)} icon={<DownloadOutlined />}>Ver PDF</Button>
         </div>
       )
     }
   ];
+  
 
   return (
     <>

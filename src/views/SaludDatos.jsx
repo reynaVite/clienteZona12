@@ -47,7 +47,7 @@ export function SaludDatos() {
 
   const obtenerCategorias = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/categoria");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/categoria");
       setcategotriOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de las categorias:", error);
@@ -57,7 +57,7 @@ export function SaludDatos() {
 
   const obtenerRegistros = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/saludAlum");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/saludAlum");
       setRegistros(response.data);
       setLoading(false);
     } catch (error) {
@@ -96,7 +96,7 @@ export function SaludDatos() {
       }
 
       // Actualizar el registro específico en la base de datos
-      await axios.post("http://localhost:3000/actualizarSalud", {
+      await axios.post("https://servidor-zonadoce.vercel.app/actualizarSalud", {
         id: id,
         idAlumnos: idAlumnos,
         valor: valor.trim()
@@ -128,7 +128,7 @@ export function SaludDatos() {
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:3000/saludAlumBorrar`, { data: { id: deleteId } });
+      await axios.delete(`https://servidor-zonadoce.vercel.app/saludAlumBorrar`, { data: { id: deleteId } });
       message.success("Registro eliminado correctamente.");
       obtenerRegistros();
       setRegistrosFiltrados();
@@ -163,7 +163,7 @@ export function SaludDatos() {
     // Realiza aquí la consulta al backend utilizando Axios u otra biblioteca
     try {
       // Ejemplo de consulta al backend utilizando Axios
-      const response = await axios.get(`http://localhost:3000/ConsultarUnicos/${idAlumno}`);
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/ConsultarUnicos/${idAlumno}`);
       const responseData = response.data;
       console.log("Respuesta del backend:", response.data);
 
@@ -180,7 +180,7 @@ export function SaludDatos() {
     // Realiza aquí la consulta al backend utilizando Axios u otra biblioteca
     try {
       // Ejemplo de consulta al backend utilizando Axios
-      const response = await axios.get(`http://localhost:3000/ConsultarDiscapacifdada/${idAlumno}`);
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/ConsultarDiscapacifdada/${idAlumno}`);
       // Procesar la respuesta del backend, si es necesario
       const responseData = response.data;
       console.log("Respuesta del backend:", response.data);
@@ -195,7 +195,7 @@ export function SaludDatos() {
 
   const vacunas = async (idAlumno) => {
     try {
-      const response = await axios.get(`http://localhost:3000/ConsultarVacunas/${idAlumno}`);
+      const response = await axios.get(`https://servidor-zonadoce.vercel.app/ConsultarVacunas/${idAlumno}`);
       const responseData = response.data;
 
       // Actualizar el estado con los datos de las vacunas

@@ -31,7 +31,7 @@ const Comments = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const response = await axios.get("http://localhost:3000/foro");
+        const response = await axios.get("https://servidor-zonadoce.vercel.app/foro");
         const filteredComments = response.data.filter(comment => comment.id_examen === parseInt(id));
         console.log("Comentarios filtrados:", filteredComments); // Verifica los comentarios filtrados
         setComments(filteredComments);
@@ -47,7 +47,7 @@ const Comments = () => {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await axios.get(`http://localhost:3000/getPdf?id=${id}`);
+        const response = await axios.get(`https://servidor-zonadoce.vercel.app/getPdf?id=${id}`);
         const { pdfUrl } = response.data; // Obtener la URL del PDF
         setPdfUrl(pdfUrl); // Almacenar la URL en el estado
       } catch (error) {
@@ -78,7 +78,7 @@ const Comments = () => {
   
       console.log("Datos enviados a la ruta guardarForo:", postData);
   
-      await axios.post("http://localhost:3000/guardarForo", postData);
+      await axios.post("https://servidor-zonadoce.vercel.app/guardarForo", postData);
       message.success("Comentario guardado correctamente.");
       setComments([...comments, postData]);
       setDescripcion("");
@@ -97,7 +97,7 @@ const Comments = () => {
       cancelText: 'Cancelar',
       onOk: async () => {
         try {
-          await axios.delete(`http://localhost:3000/eliminarComentario/${commentId}`);
+          await axios.delete(`https://servidor-zonadoce.vercel.app/eliminarComentario/${commentId}`);
           setComments(comments.filter(comment => comment.id !== commentId));
           message.success("Comentario eliminado correctamente.");
         } catch (error) {
@@ -127,7 +127,7 @@ const Comments = () => {
         opinion: editDescripcion,
       };
 
-      await axios.put("http://localhost:3000/actualizarComentario", postData);
+      await axios.put("https://servidor-zonadoce.vercel.app/actualizarComentario", postData);
 
       message.success("Comentario actualizado correctamente.");
       setComments(comments.map(comment => comment.id === editCommentId ? { ...comment, opinion: editDescripcion } : comment));

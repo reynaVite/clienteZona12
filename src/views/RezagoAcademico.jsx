@@ -18,7 +18,7 @@ export function RezagoAcademico() {
       try {
         // Obtiene los alumnos
         const responseAlumnos = await axios.get(
-          "http://localhost:3000/alumnos"
+          "https://servidor-zonadoce.vercel.app/alumnos"
         );
         console.log("Respuesta del servidor:", responseAlumnos);
         const registrosOrdenados = ordenarRegistrosPorNombre(
@@ -30,7 +30,7 @@ export function RezagoAcademico() {
           registrosOrdenados.map(async (alumno) => {
             try {
               const responseVerificacion = await axios.get(
-                `http://localhost:3000/verificar-rezago/${alumno.idAlumnos}`
+                `https://servidor-zonadoce.vercel.app/verificar-rezago/${alumno.idAlumnos}`
               );
               return responseVerificacion.data.existe ? null : alumno;
             } catch (error) {
@@ -93,7 +93,7 @@ export function RezagoAcademico() {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/guardar-rezago-academico",
+        "https://servidor-zonadoce.vercel.app/guardar-rezago-academico",
         datosRegistro
       );
 
@@ -127,7 +127,7 @@ export function RezagoAcademico() {
         await handleGuardarRegistroYDetalles(record);
       }
       // Re-cargar registros después de guardar todos
-      const responseAlumnos = await axios.get("http://localhost:3000/alumnos");
+      const responseAlumnos = await axios.get("https://servidor-zonadoce.vercel.app/alumnos");
       const registrosOrdenados = ordenarRegistrosPorNombre(
         responseAlumnos.data
       );

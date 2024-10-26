@@ -100,7 +100,7 @@ export function Registro() {
 
   const obtenerValoresPlantel = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/plantel");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/plantel");
       setPlantelOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores del plantel:", error);
@@ -108,7 +108,7 @@ export function Registro() {
   };
   const obtenerValoresSesion = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/sesiones");
+      const response = await axios.get("https://servidor-zonadoce.vercel.app/sesiones");
       setSesionOptions(response.data);
     } catch (error) {
       console.error("Error al obtener valores de sesiones:", error);
@@ -118,7 +118,7 @@ export function Registro() {
   const obtenerValoresPreguntasSecretas = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:3000/preguntas-secretas"
+        "https://servidor-zonadoce.vercel.app/preguntas-secretas"
       );
       setPreguntasSecretasOptions(response.data);
     } catch (error) {
@@ -163,14 +163,14 @@ export function Registro() {
         };
 
         // Verificar si la CURP ya existe en la base de datos
-        const curpExists = await axios.post('http://localhost:3000/verificar-curp', { curp: values.curp });
+        const curpExists = await axios.post('https://servidor-zonadoce.vercel.app/verificar-curp', { curp: values.curp });
 
         if (curpExists.data.exists) {
             // Mostrar mensaje de error si la CURP ya existe
             message.error('La CURP ya se encuentra registrada');
         } 
                 // Ambos verificaciones pasaron, realizar la solicitud al servidor para insertar los datos
-                const response = await axios.post('http://localhost:3000/insertar-dato', dataToInsert);
+                const response = await axios.post('https://servidor-zonadoce.vercel.app/insertar-dato', dataToInsert);
                 message.success('Registro exitoso');
                 navigate('/');
            

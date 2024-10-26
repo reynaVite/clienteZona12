@@ -139,7 +139,7 @@ const downloadPDF = () => {
   const actualizarFormSubmit = async (values) => {
     setButtonLoading(true); // Activar el estado de carga del botón
     try {
-      const response = await axios.post("http://localhost:3000/actualizarAlumno", {
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/actualizarAlumno", {
   
         idAlumnos: selectedUser.idAlumnos,
 
@@ -170,7 +170,7 @@ const downloadPDF = () => {
   const borrarFormSubmit = async () => { 
     setButtonLoading(true); // Activar el estado de carga del botón
     try {
-      const response = await axios.post("http://localhost:3000/borrarAlumnos", {
+      const response = await axios.post("https://servidor-zonadoce.vercel.app/borrarAlumnos", {
         docenteId: selectedUser.idAlumnos, // Cambia selectedUser.id por selectedUser.idAlumnos
       });
 
@@ -191,7 +191,7 @@ const downloadPDF = () => {
     }
   };
 
-  const URL = "http://localhost:3000/alumnos";
+  const URL = "https://servidor-zonadoce.vercel.app/alumnos";
 
   const showData = async () => {
     try {

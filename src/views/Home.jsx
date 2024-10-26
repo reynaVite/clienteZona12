@@ -19,32 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 
 export function Home() {
-  // Función para autenticarse
-  const loguearse = () => {
-    signInAnonymously(getAuth())
-      .then(usuario => console.log(usuario))
-      .catch(error => console.error("Error de autenticación:", error));
-  };
-
-  // Función para activar la recepción de mensajes
-  const activarMensajes = async () => {
-    const token = await getToken(messaging, {
-      vapidKey: "BGUQaLFE9uIkwN1JxgqkPjcG9gokURPLsQQyX2UiS-9_sintKkxO3cG5TgKnIzZi02VOspT-KJNV4qmIJlhb9e8"
-    }).catch(error => console.log("Tuviste un error al generar el token"));
-
-    if (token) console.log("tu token:", token);
-    if (!token) console.log("no tienes token");
-  };
-
-  // Efecto para manejar la recepción de mensajes
-  useEffect(() => {
-    const unsubscribe = onMessage(messaging, message => {
-      console.log("tu mensaje:", message);
-      toast(message.notification.title); // Mostrar notificación
-    });
  
-    return () => unsubscribe();
-  }, []);
 
   return (
     <>
@@ -85,10 +60,7 @@ export function Home() {
               </p>
             </div>
           </section>
-
-          {/* Botones para loguearse y activar mensajes */}
-          <button onClick={loguearse} className="btn-loguearse">Loguearse</button>
-          <button onClick={activarMensajes} className="btn-activar-mensajes">Recibir noti</button>
+ 
         </section>
       </main>
 
