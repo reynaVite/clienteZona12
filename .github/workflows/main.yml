@@ -1,0 +1,74 @@
+# .github/workflows/ci.yml
+name: CI Workflow for React + Vite
+
+# Ejecutar el pipeline cuando haya un push o pull request a las ramas main o develop.
+on:
+  push:
+    branches:
+      - master
+      - develop
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+      # Descargar el código del repositorio
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Configurar Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      # Cachear node_modules para reducir el tiempo de compilación
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      # Instalar dependencias
+      - name: Install dependencies
+        run: npm install
+
+      # Ejecutar pruebas unitarias con Jest
+      - name: Run tests
+        run: npm run test -- --ci --watchAll=false
+
+      # Compilar la aplicación Vite
+      - name: Build Vite app
+        run: npm run build
+
+  # Enviar notificación por correo después del build
+  notify:
+    name: Send Email Notification
+    runs-on: ubuntu-latest
+    needs: build
+    if: failure() || success()  # Notificar tanto si falla como si es exitoso
+
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Build ${{ job.status }}:${{ github.repository }}
+          body: |
+            The CI build has ${{ job.status }} for ${{ github.repository }}.
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref }}
+            Author: ${{ github.actor }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
