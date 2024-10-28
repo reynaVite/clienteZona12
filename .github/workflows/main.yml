@@ -99,6 +99,16 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      # Iniciar el servidor de Vite en segundo plano
+      - name: Start Vite server
+        run: npm run dev &
+        env:
+          CI: true  # Asegura que Vite se ejecute en modo CI
+
+      # Esperar a que el servidor esté listo
+      - name: Wait for Vite to be ready
+        run: npx wait-on http://localhost:5173
+
       # Ejecutar las pruebas E2E de Cypress
       - name: Run Cypress E2E tests
         run: npx cypress run
