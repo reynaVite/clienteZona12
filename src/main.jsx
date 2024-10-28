@@ -50,6 +50,7 @@ import ReRezago from "./views/ReRezago";
 
 import Comments from "./views/examenesForo/examenesScreen";
 import ExamCatalog from "./views/examenesForo/ExamenCatalog";
+import LoginScreens from "./views/LoginScreen";
 
 
 // Componente ScrollToTop
@@ -236,6 +237,11 @@ const router = createBrowserRouter([
     path: "/ExamenesPrueba",
     element: <ExamCatalog />,
   },
+  {
+    path: "/loginnn",
+    element: <LoginScreens/>,
+  },
+   
    
    
    
