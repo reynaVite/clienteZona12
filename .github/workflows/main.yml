@@ -17,17 +17,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Descargar el código del repositorio
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
-      # Cachear node_modules para reducir el tiempo de compilación
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -67,17 +64,15 @@ jobs:
     needs: build-and-test  # Se ejecutará solo si el job anterior es exitoso
 
     steps:
-      # Descargar el código del repositorio
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Configurar Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
           node-version: '18'
 
-      # Cachear node_modules para reducir el tiempo de compilación
+
       - name: Cache node modules
         uses: actions/cache@v3
         with:
@@ -95,17 +90,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cypress-
 
-      # Instalar dependencias
       - name: Install dependencies
         run: npm install
 
-      # Iniciar el servidor de Vite en segundo plano
       - name: Start Vite server
         run: npm run dev &
         env:
           CI: true  # Asegura que Vite se ejecute en modo CI
 
-      # Esperar a que el servidor esté listo
       - name: Wait for Vite to be ready
         run: npx wait-on http://localhost:5173
 

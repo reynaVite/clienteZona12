@@ -16,7 +16,7 @@ export const Carrusel = () => {
         <img src={imagensita} alt="" className="imgCarru h-80 w-screen" />
       </div>
       <div>
-        <img src={imagensita} alt="" className="imgCarru h-80 w-screen" />
+        <img src= alt="" className="imgCarru h-80 w-screen" />
       </div>
       <div>
         <img src={imagensita} alt="" className="imgCarru h-80 w-screen" />
