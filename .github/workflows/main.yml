@@ -36,9 +36,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # Cachear Cypress para evitar descargas repetidas
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
       # Instalar dependencias
       - name: Install dependencies
         run: npm install
+
+      # Instalar Cypress si no está cacheado
+      - name: Install Cypress
+        run: npx cypress install
 
       # Ejecutar pruebas unitarias con Jest
       - name: Run unit tests
@@ -73,19 +86,18 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
+      # Cachear Cypress para evitar descargas repetidas
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
+
       # Instalar dependencias
       - name: Install dependencies
         run: npm install
-
-      # Iniciar servidor de desarrollo Vite
-      - name: Start Vite Server
-        run: npm run dev &
-        env:
-          CI: true
-
-      # Esperar que el servidor esté en ejecución
-      - name: Wait for Vite Server to start
-        run: npx wait-on http://localhost:5173
 
       # Ejecutar las pruebas E2E de Cypress
       - name: Run Cypress E2E tests
