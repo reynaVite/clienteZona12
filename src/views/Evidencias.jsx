@@ -15,32 +15,29 @@ import "../css/Login.css";
 import { uploadBytes, getDownloadURL, ref } from "firebase/storage";
 import { storage } from "../firebase/config";
 import { v4 as uuidv4 } from 'uuid';
-import { jsPDF } from "jspdf"; // Importa jsPDF  
+import { jsPDF } from "jspdf";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getToken, onMessage } from "firebase/messaging";
-import { messaging } from "../firebase"; // Asegúrate de que la ruta sea correcta 
+import { messaging } from "../firebase";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer, toast } from "react-toastify";
 
 export function Evidencias() {
-
   const enviarNotificacion = async () => {
     const curp = localStorage.getItem("userCURP") || "";  // Obtener la CURP del usuario logueado
-  
+
     if (!curp) {
       return message.error("No se ha encontrado la CURP del usuario.");
     }
-  
+
     try {
-      // Hacer la solicitud al backend para enviar la notificación
       await axios.post('https://servidor-zonadoce.vercel.app/enviarNotificacionPorCurp', { curp });
-      toast.success("Notificación enviada correctamente.");
+      console.log("Notificación enviada correctamente.");
     } catch (error) {
       console.error("Error al enviar la notificación:", error);
       message.error("Error al enviar la notificación.");
     }
   };
-  
 
   // Función para autenticar al usuario anónimamente
   const loguearse = async () => {
@@ -55,32 +52,27 @@ export function Evidencias() {
     }
   };
 
-// Función para activar la recepción de mensajes y guardar el token
-const activarMensajes = async (usuario) => {
-  try {
-    const token = await getToken(messaging, {
-      vapidKey: "BGUQaLFE9uIkwN1JxgqkPjcG9gokURPLsQQyX2UiS-9_sintKkxO3cG5TgKnIzZi02VOspT-KJNV4qmIJlhb9e8"
-    });
-
-    const curp = localStorage.getItem("userCURP") || ""; // Obtener la CURP del localStorage
-
-    if (token) {
-      console.log("Token generado:", token);
-      
-      // Enviar la CURP y el token al backend
-      await axios.post('https://servidor-zonadoce.vercel.app/guardarToken', {
-        token: token,  // Token FCM
-        curp: curp     // CURP del usuario
+  // Función para activar la recepción de mensajes y guardar el token
+  const activarMensajes = async (usuario) => {
+    try {
+      const token = await getToken(messaging, {
+        vapidKey: "BGUQaLFE9uIkwN1JxgqkPjcG9gokURPLsQQyX2UiS-9_sintKkxO3cG5TgKnIzZi02VOspT-KJNV4qmIJlhb9e8"
       });
-
-      toast.success("Token guardado correctamente");
-    } else {
-      console.log("No se pudo generar el token.");
+      const curp = localStorage.getItem("userCURP") || ""; // Obtener la CURP del localStorage
+      if (token) {
+        console.log("Token generado:", token);
+        await axios.post('https://servidor-zonadoce.vercel.app/guardarToken', {
+          token: token,  // Token FCM
+          curp: curp     // CURP del usuario
+        });
+        console.log("Token guardado correctamente");
+      } else {
+        console.log("No se pudo generar el token.");
+      }
+    } catch (error) {
+      console.error("Error al generar el token o enviar la notificación:", error);
     }
-  } catch (error) {
-    console.error("Error al generar el token o enviar la notificación:", error);
-  }
-};
+  };
 
   // Efecto para manejar la recepción de mensajes y solicitudes iniciales
   useEffect(() => {
@@ -94,12 +86,19 @@ const activarMensajes = async (usuario) => {
     // Manejar recepción de mensajes
     const unsubscribe = onMessage(messaging, message => {
       console.log("Mensaje recibido:", message);
-      toast(message.notification.title); // Mostrar notificación en la UI
+      toast(message.notification.title);
     });
 
     iniciarAutenticacionYNotificaciones();
+    // Intervalo para enviar notificación cada 60 segundos (1 minuto)
+    const intervalId = setInterval(() => {
+      enviarNotificacion();
+    }, 60000); // 60,000 milisegundos = 1 minuto
 
-    return () => unsubscribe(); // Cleanup
+    return () => {
+      clearInterval(intervalId);
+      unsubscribe();
+    };
   }, []);
 
   const [actividades, setActividades] = useState([]);
@@ -113,13 +112,14 @@ const activarMensajes = async (usuario) => {
   // Función para detener la cámara
   const stopCamera = () => {
     const video = videoRef.current;
-    const stream = video.srcObject;
-    if (stream) {
+    if (video && video.srcObject) {
+      const stream = video.srcObject;
       const tracks = stream.getTracks();
       tracks.forEach(track => track.stop());
       video.srcObject = null;
     }
   };
+
 
   const obtenerActividades = async () => {
     try {
@@ -127,18 +127,15 @@ const activarMensajes = async (usuario) => {
       const response = await axios.get("https://servidor-zonadoce.vercel.app/consultarActividadesId", {
         params: { role: userRole }
       });
-
       const actividadesFiltradas = await Promise.all(response.data.map(async (actividad) => {
         const existe = await verificarExistencia(actividad.id);
         return { ...actividad, existe };
       }));
-
       setActividades(actividadesFiltradas.filter(actividad => !actividad.existe));
     } catch (error) {
       console.error("Error al obtener las actividades:", error);
     }
   };
-
   useEffect(() => {
     obtenerActividades();
   }, []);
@@ -152,7 +149,7 @@ const activarMensajes = async (usuario) => {
     setActividadSeleccionada(null);
     setFileList([]);
     setImageSrc(null);
-    stopCamera(); // Detener la cámara al cerrar el modal
+    stopCamera();
   };
 
   const handleFileChange = ({ file, fileList }) => {
@@ -191,7 +188,7 @@ const activarMensajes = async (usuario) => {
   // Función para convertir la imagen en PDF
   const convertImageToPDF = () => {
     const pdf = new jsPDF();
-    pdf.addImage(imageSrc, "PNG", 10, 10, 180, 160); // Añadir la imagen al PDF (ajusta la posición y tamaño)
+    pdf.addImage(imageSrc, "PNG", 10, 10, 180, 160);
     return pdf.output("blob"); // Devuelve el PDF como un Blob
   };
 
@@ -222,12 +219,11 @@ const activarMensajes = async (usuario) => {
       file = fileList[0].originFileObj;
       url = await uploadFileToFirebase(file);
     } else if (submitType === "camera" && imageSrc) {
-      const pdfBlob = convertImageToPDF(); // Convierte la imagen en un PDF Blob
-      url = await uploadFileToFirebase(pdfBlob, true); // Sube el PDF a Firebase Storage
+      const pdfBlob = convertImageToPDF();
+      url = await uploadFileToFirebase(pdfBlob, true);
     }
 
     if (!url) return;
-
     const formData = {
       actividadId: actividadSeleccionada.id,
       pdfUrl: url,
@@ -266,7 +262,12 @@ const activarMensajes = async (usuario) => {
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Título", dataIndex: "titulo", key: "titulo" },
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
-    { title: "Fecha Solicitada", dataIndex: "fecha_sol", key: "fecha_sol", render: (text) => moment(text).format('LL') },
+    {
+      title: "Fecha Solicitada",
+      dataIndex: "fecha_sol",
+      key: "fecha_sol",
+      render: (text) => moment(text).utc().format('LL') // Mantener la fecha en UTC
+    },    
     { title: "Hora Solicitada", dataIndex: "hora_sol", key: "hora_sol" },
     {
       title: "Acciones",
@@ -288,12 +289,7 @@ const activarMensajes = async (usuario) => {
 
         <section className="basis-3/4 mx-5">
           <Titulo tit={"Lista de actividades"} />
-
-
           <Button onClick={enviarNotificacion} icon={<UploadOutlined />}>Enviar Notificación</Button>
-
-
-
           <div className="overflow-x-auto">
             <Table bordered columns={columns} dataSource={actividades} className="snap-x" rowKey="id" />
           </div>
@@ -304,7 +300,7 @@ const activarMensajes = async (usuario) => {
 
       <Modal
         title="Detalles de la actividad"
-        visible={!!actividadSeleccionada}
+        open={!!actividadSeleccionada}
         onCancel={handleCloseModal}
         footer={[
           <Button key="close" onClick={handleCloseModal}>Cerrar</Button>,

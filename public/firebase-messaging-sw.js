@@ -13,16 +13,17 @@ const firebaseConfig = {
   
 const app = firebase.initializeApp(firebaseConfig)
 const messaging = firebase.messaging(app)
-
+// Elimina o comenta el siguiente bloque si solo quieres que el backend gestione las notificaciones
+/*
 messaging.onBackgroundMessage((payload) => {
   console.log('Mensaje recibido en segundo plano: ', payload)
-  console.log(payload)
   
   const notificationTitle = payload.notification.title
   const notificationOptions = {
     body: payload.notification.body,
-    icon: "https://labarbada.store/img/logo.png"
+    icon: "https://cirupied.com/1.png"
   }
   
   return self.registration.showNotification(notificationTitle, notificationOptions)
-})
+});
+*/
