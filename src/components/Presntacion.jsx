@@ -1,5 +1,7 @@
 import { Affix } from "antd";
 import Bracrum from "./breadCrumber";
+import React from 'react';
+
 
 export const Presentacion = ({ tit, icono }) => {
   return (

@@ -1,3 +1,4 @@
+import React from 'react';
 
 import '../css/Titulo.css'
 export function Titulo({tit,icono}) {
