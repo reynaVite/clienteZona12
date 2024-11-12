@@ -1,109 +1,129 @@
-  name: CI Workflow for React + Vite
+name: CI Workflow for React + Vite
 
-  on:
-    push:
-      branches:
-        - master
-        - develop
-        - feature/*
-    pull_request:
-      branches:
-        - master
-        - develop
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - feature/*
+  pull_request:
+    branches:
+      - master
+      - develop
 
-  jobs:
-    build-and-test:
-      name: Build and Test
-      runs-on: ubuntu-latest
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: ubuntu-latest
 
-      steps:
-        # Descargar el código del repositorio
-        - name: Checkout code
-          uses: actions/checkout@v3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        # Configurar Node.js
-        - name: Setup Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: '18'
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
 
-        # Cachear node_modules para reducir el tiempo de compilación
-        - name: Cache node modules
-          uses: actions/cache@v3
-          with:
-            path: node_modules
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-node-
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-        # Instalar dependencias
-        - name: Install dependencies
-          run: npm install
+      # Cachear Cypress para evitar descargas repetidas
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
-        # Ejecutar pruebas unitarias con Jest
-        - name: Run unit tests
-          run: npm run test
+      # Instalar dependencias
+      - name: Install dependencies
+        run: npm install
 
-        # Compilar la aplicación Vite
-        - name: Build Vite app
-          run: npm run build
+      # Instalar Cypress si no está cacheado
+      - name: Install Cypress
+        run: npx cypress install
 
-    e2e-tests:
-      name: Cypress E2E Tests
-      runs-on: ubuntu-latest
-      needs: build-and-test  # Se ejecutará solo si el job anterior es exitoso
+      # Ejecutar pruebas unitarias con Jest
+      - name: Run unit tests
+        run: npm run test
 
-      steps:
-        # Descargar el código del repositorio
-        - name: Checkout code
-          uses: actions/checkout@v3
+      # Compilar la aplicación Vite
+      - name: Build Vite app
+        run: npm run build
 
-        # Configurar Node.js
-        - name: Setup Node.js
-          uses: actions/setup-node@v2
-          with:
-            node-version: '18'
+  e2e-tests:
+    name: Cypress E2E Tests
+    runs-on: ubuntu-latest
+    needs: build-and-test  # Se ejecutará solo si el job anterior es exitoso
 
-        # Cachear node_modules para reducir el tiempo de compilación
-        - name: Cache node modules
-          uses: actions/cache@v3
-          with:
-            path: node_modules
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-              ${{ runner.os }}-node-
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-        # Instalar dependencias
-        - name: Install dependencies
-          run: npm install
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
 
-        # Instalar Cypress
-        - name: Install Cypress
-          run: npm install cypress --save-dev
 
-        # Ejecutar las pruebas E2E de Cypress
-        - name: Run Cypress E2E tests
-          run: npx cypress run
+      - name: Cache node modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
 
-    notify:
-      name: Send Email Notification
-      runs-on: ubuntu-latest
-      needs: [build-and-test, e2e-tests]  # Solo si ambos trabajos han sido ejecutados
-      if: failure() || success()  # Notificar tanto si falla como si es exitoso
+      # Cachear Cypress para evitar descargas repetidas
+      - name: Cache Cypress binary
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/Cypress
+          key: ${{ runner.os }}-cypress-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-cypress-
 
-      steps:
-        - name: Send email notification
-          uses: dawidd6/action-send-mail@v3
-          with:
-            server_address: smtp.gmail.com
-            server_port: 465
-            username: ${{ secrets.EMAIL_USERNAME }}
-            password: ${{ secrets.EMAIL_PASSWORD }}
-            subject: Build ${{ job.status }}:${{ github.repository }}
-            body: |
-              The CI build has ${{ job.status }} for ${{ github.repository }}.
-              Commit: ${{ github.sha }}
-              Branch: ${{ github.ref }}
-              Author: ${{ github.actor }}
-            to: ${{ secrets.EMAIL_TO }}
-            from: ${{ secrets.EMAIL_USERNAME }}
+      - name: Install dependencies
+        run: npm install
+
+      - name: Start Vite server
+        run: npm run dev &
+        env:
+          CI: true  # Asegura que Vite se ejecute en modo CI
+
+      - name: Wait for Vite to be ready
+        run: npx wait-on http://localhost:5173
+
+      # Ejecutar las pruebas E2E de Cypress
+      - name: Run Cypress E2E tests
+        run: npx cypress run
+
+  notify:
+    name: Send Email Notification
+    runs-on: ubuntu-latest
+    needs: [build-and-test, e2e-tests]  # Solo si ambos trabajos han sido ejecutados
+    if: failure() || success()  # Notificar tanto si falla como si es exitoso
+
+    steps:
+      - name: Send email notification
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: Build ${{ job.status }}:${{ github.repository }}
+          body: |
+            The CI build has ${{ job.status }} for ${{ github.repository }}.
+            Commit: ${{ github.sha }}
+            Branch: ${{ github.ref }}
+            Author: ${{ github.actor }}
+          to: ${{ secrets.EMAIL_TO }}
+          from: ${{ secrets.EMAIL_USERNAME }}
