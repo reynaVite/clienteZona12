@@ -262,7 +262,12 @@ export function Evidencias() {
     { title: "ID", dataIndex: "id", key: "id" },
     { title: "Título", dataIndex: "titulo", key: "titulo" },
     { title: "Descripción", dataIndex: "descripcion", key: "descripcion" },
-    { title: "Fecha Solicitada", dataIndex: "fecha_sol", key: "fecha_sol", render: (text) => moment(text).format('LL') },
+    {
+      title: "Fecha Solicitada",
+      dataIndex: "fecha_sol",
+      key: "fecha_sol",
+      render: (text) => moment(text).utc().format('LL') // Mantener la fecha en UTC
+    },    
     { title: "Hora Solicitada", dataIndex: "hora_sol", key: "hora_sol" },
     {
       title: "Acciones",
@@ -276,7 +281,7 @@ export function Evidencias() {
     <>
       <Affix><Header /></Affix>
       <Presentacion
-        tit={"Evidencias"}
+        tit={"Evidencias:)"}
         icono={<img src={icono} className="lg:w-[280px] lg:translate-x-32 lg:-translate-y-10 text-white celular:translate-x-2 lg:z-50" />}
       />
       <div className="lg:w-10/12 lg:m-auto">
