@@ -36,8 +36,15 @@ export function Login() {
   const [timeLeft, setTimeLeft] = useState(0);
 
   const onFinish = async (values) => {
+    // Enviar el evento a Google Analytics antes de intentar el inicio de sesión
+    ReactGA.event({
+      category: "Login",
+      action: "Usuario intentó iniciar sesión",
+      label: "Botón de Iniciar sesión",
+    });
+  
     setButtonLoading(true);
-
+  
     try {
       const response = await axios.post(
         "https://servidor-zonadoce.vercel.app/login",
@@ -46,19 +53,19 @@ export function Login() {
           contrasena: values.contrasena,
         }
       );
-
+  
       if (response.data.success) {
         console.log("Inicio de sesión exitoso");
         message.success("Inicio de sesión exitoso");
-
+  
         // Continuar con el flujo de inicio de sesión exitoso
         localStorage.setItem("userRole", response.data.role);
         localStorage.setItem("userCURP", formValues.curp);
         localStorage.setItem("userPlantel", response.data.plantel);
-
+  
         const userRole = response.data.role;
         setUserRole(userRole);
-
+  
         if (userRole === 1 || userRole === 2 || userRole === 3) {
           navigate("/Inicio");
         } else {
@@ -69,7 +76,7 @@ export function Login() {
         message.error(response.data.message || "Credenciales incorrectas");
         const updatedFailedAttempts = failedAttempts + 1;
         setFailedAttempts(updatedFailedAttempts);
-
+  
         if (updatedFailedAttempts === 3) {
           try {
             message.error("Cuenta bloqueada.");
@@ -92,7 +99,7 @@ export function Login() {
       setButtonLoading(false);
     }
   };
-
+  
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
     message.error("Por favor, completa todos los campos.");
