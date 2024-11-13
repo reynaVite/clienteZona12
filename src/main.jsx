@@ -51,8 +51,38 @@ import ReRezago from "./views/ReRezago";
 import Comments from "./views/examenesForo/examenesScreen";
 import ExamCatalog from "./views/examenesForo/ExamenCatalog";
 import LoginScreens from "./views/LoginScreen";
+import * as Sentry from "@sentry/react";
 
+import ReactGA from "react-ga4";
 
+// Configura Google Analytics con tu ID de medición
+ReactGA.initialize("G-SWTX4DPD1L"); // Reemplaza "G-SWTX4DPD1L" con tu ID de medición de Google Analytics
+
+// Componente para rastrear vistas de página
+const TrackPageView = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    ReactGA.send({ hitType: "pageview", page: location.pathname });
+  }, [location]);
+
+  return null;
+};
+Sentry.init({
+  dsn: "https://9b1b092223a63ee80741f94321151940@o4508289402470400.ingest.us.sentry.io/4508289404108800",
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+  // Tracing
+  tracesSampleRate: 1.0, //  Capture 100% of the transactions
+  // Set 'tracePropagationTargets' to control for which URLs distributed tracing should be enabled
+  tracePropagationTargets: ["localhost", /^https:\/\/yourserver\.io\/api/],
+  // Session Replay
+  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+  replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+});
+Sentry.captureException(new Error("Esta es una prueba de error de Sentry"));
 // Componente ScrollToTop
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -255,6 +285,7 @@ root.render(
   <>
     <RouterProvider router={router}>
       <ScrollToTop />
+      <TrackPageView /> 
     </RouterProvider>
   </>
 

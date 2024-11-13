@@ -9,6 +9,8 @@ import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, message } from "antd";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { Subtitulo, Contenido } from "../components/Titulos";
+import * as Sentry from "@sentry/react";
+
 
 export function ReContraseña() {
   const [formValues, setFormValues] = useState({});
@@ -20,38 +22,43 @@ export function ReContraseña() {
   const navigate = useNavigate();
  // const [curpExists, setCurpExists] = useState(null);
 
-  const onFinish = async (values) => {
-    try {
-      const curpExistsResponse = await axios.post(
-        "https://servidor-zonadoce.vercel.app/verificar-curp",
-        {
-          curp: values.curp,
-        }
-      );
-      const curpExists = curpExistsResponse.data.exists;
-      const usuarioDeBaja = curpExistsResponse.data.usuarioDeBaja;
-      if (curpExists) {
-        if (usuarioDeBaja) {
-          message.error("El usuario está dado de baja");
-        } else {
-          message.success("Datos correctos");
-          navigate("/Re2Contraseña", {
-            state: {
-              curp: values.curp,
-            },
-          });
-        }
-      } else {
-        message.error("La CURP no está registrada");
+ const onFinish = async (values) => {
+  try {
+    const curpExistsResponse = await axios.post(
+      "https://servidor-zonadoce.vercel.app/verificar-curp",
+      {
+        curp: values.curp,
       }
-    } catch (error) {
-      if (error.response) {
-        message.error("Error. Por favor, inténtalo de nuevo.");
+    );
+    const curpExists = curpExistsResponse.data.exists;
+    const usuarioDeBaja = curpExistsResponse.data.usuarioDeBaja;
+    if (curpExists) {
+      if (usuarioDeBaja) {
+        message.error("El usuario está dado de baja");
       } else {
-        message.error("Error inesperado. Por favor, inténtalo de nuevo.");
+        message.success("Datos correctos");
+
+        // Forzar un error de prueba
+        Sentry.captureException(new Error("Error de prueba en recuperación de contraseña"));
+
+        // Navegar a la siguiente pantalla después del error de prueba
+        navigate("/Re2Contraseña", {
+          state: {
+            curp: values.curp,
+          },
+        });
       }
+    } else {
+      message.error("La CURP no está registrada");
     }
-  };
+  } catch (error) {
+    if (error.response) {
+      message.error("Error. Por favor, inténtalo de nuevo.");
+    } else {
+      message.error("Error inesperado. Por favor, inténtalo de nuevo.");
+    }
+  }
+};
 
   const onFinishFailed = (errorInfo) => {
     message.error("Por favor, completa todos los campos.");

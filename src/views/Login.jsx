@@ -39,8 +39,8 @@ export function Login() {
   const [timeLeft, setTimeLeft] = useState(0);
 
   const onFinish = async (values) => {
-    setButtonLoading(true); // Activar el estado de carga del botón
-
+    setButtonLoading(true);
+  
     try {
       const response = await axios.post(
         "https://servidor-zonadoce.vercel.app/login",
@@ -49,19 +49,22 @@ export function Login() {
           contrasena: values.contrasena,
         }
       );
-
+  
       if (response.data.success) {
         console.log("Inicio de sesión exitoso");
         message.success("Inicio de sesión exitoso");
+  
+        // Forzar un error intencional
+        Sentry.captureException(new Error("Error de prueba después de inicio de sesión exitoso"));
+  
+        // Continuar con el flujo de inicio de sesión exitoso
         localStorage.setItem("userRole", response.data.role);
         localStorage.setItem("userCURP", formValues.curp);
         localStorage.setItem("userPlantel", response.data.plantel);
-
-
+  
         const userRole = response.data.role;
         setUserRole(userRole);
-
-
+  
         if (userRole === 1 || userRole === 2 || userRole === 3) {
           navigate("/Inicio");
         } else {
@@ -72,8 +75,7 @@ export function Login() {
         message.error(response.data.message || "Credenciales incorrectas");
         const updatedFailedAttempts = failedAttempts + 1;
         setFailedAttempts(updatedFailedAttempts);
-
-        // Si hay 3 intentos fallidos, actualizar estado_cuenta a 2
+  
         if (updatedFailedAttempts === 3) {
           try {
             message.error("Cuenta bloqueada.");
@@ -83,7 +85,7 @@ export function Login() {
                 curp: values.curp,
               }
             );
-            setButtonBlocked(true); // Bloquear el botón
+            setButtonBlocked(true);
           } catch (error) {
             console.error("Error al actualizar estado_cuenta:", error);
           }
@@ -93,10 +95,10 @@ export function Login() {
       console.error("Error al iniciar sesión:", error);
       message.error("Inicio de sesión fallido: Usuario no encontrado.");
     } finally {
-      setButtonLoading(false); // Desactivar el estado de carga del botón
+      setButtonLoading(false);
     }
   };
-
+  
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
