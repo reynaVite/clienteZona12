@@ -1,25 +1,85 @@
-// src/views/Home.jsx
 import React, { useEffect } from "react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
-import { Subtitulo, Titulo } from "../components/Titulos";
-import "../css/Inicio.css";
-import { ScrollToTop } from "../components/ScrollToTop";
-import inicio from "../img/imagenUno.jpg";
-import { CSPMetaTag } from "../components/CSPMetaTag";
 import { Divider, Image, Affix } from "antd";
+import { Subtitulo, Titulo } from "../components/Titulos";
+import { ScrollToTop } from "../components/ScrollToTop";
 import { Carrusel } from "../components/Carrusel"; 
 import ConnectionStatus from "../components/ConnectionStatus";  
+import { ToastContainer, toast } from "react-toastify";
 import { getAuth, signInAnonymously } from "firebase/auth";
 import { getToken, onMessage } from "firebase/messaging";
-import { messaging } from "../firebase"; // Asegúrate de que la ruta sea correcta
-import { ToastContainer, toast } from "react-toastify";
+import { messaging } from "../firebase";
+import ReactGA from "react-ga4";
+import * as Sentry from "@sentry/react";
+import "../css/Inicio.css";
+import inicio from "../img/imagenUno.jpg";
 import "react-toastify/dist/ReactToastify.css";
 
-
-
 export function Home() {
- 
+  useEffect(() => {
+    // Google Analytics - Evento de Visualización de Página
+    ReactGA.send({ hitType: "pageview", page: "/home" });
+
+    // Sentry - Evento de Carga de Página
+    Sentry.captureMessage("Home page loaded", "info");
+
+    // Evento de Firebase para autenticación anónima
+    const auth = getAuth();
+    signInAnonymously(auth)
+      .then(() => {
+        console.log("Usuario autenticado anónimamente");
+      })
+      .catch((error) => {
+        // Sentry - Error de Firebase Auth
+        Sentry.captureException(error);
+        console.error("Error de autenticación anónima:", error);
+      });
+
+    // Obtener el token de Firebase Messaging
+    getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" })
+      .then((token) => {
+        console.log("Token de mensajería obtenido:", token);
+      })
+      .catch((error) => {
+        // Sentry - Error al obtener token de mensajería
+        Sentry.captureException(error);
+        console.error("Error al obtener el token de mensajería:", error);
+      });
+
+    // Evento de Desplazamiento (Scroll) en GA
+    const handleScroll = () => {
+      const scrollPercentage =
+        (window.scrollY + window.innerHeight) / document.body.scrollHeight;
+      if (scrollPercentage > 0.5) {
+        ReactGA.event({
+          category: "Home",
+          action: "Scrolled 50%",
+          label: "User scrolled halfway down the page",
+        });
+      }
+      if (scrollPercentage > 0.9) {
+        ReactGA.event({
+          category: "Home",
+          action: "Scrolled 90%",
+          label: "User reached the end of the page",
+        });
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+
+    // Cleanup on unmount
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Manejo de error de carga de imagen
+  const handleImageError = (error) => {
+    // Sentry - Error en Carga de Imagen
+    Sentry.captureException(new Error("Error al cargar imagen de inicio"));
+    console.error("Error al cargar imagen:", error);
+  };
 
   return (
     <>
@@ -49,7 +109,11 @@ export function Home() {
           </p>
           <section className="container flex lg:flex-row md:flex flex-col mt-10">
             <div className="basis-1/2">
-              <Image className="lg:min-w-max md:w-1/2" src={inicio} />
+              <Image
+                className="lg:min-w-max md:w-1/2"
+                src={inicio}
+                onError={handleImageError} // Manejo de error de carga de imagen
+              />
             </div>
             <div className="basis-1/2 text-left m-10 px-10">
               <h3 className="text-2xl font-semibold">Información relevante</h3>
