@@ -12,6 +12,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import imagen from "../img/Si.jpg";
 const { Option } = Select;
+import ReactGA from "react-ga4";
 
 export function Login() {
   const [form] = Form.useForm();
