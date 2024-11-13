@@ -19,7 +19,7 @@ import "react-toastify/dist/ReactToastify.css";
 export function Home() {
   useEffect(() => {
     // Google Analytics - Evento de Visualización de Página
-    ReactGA.send({ hitType: "pageview", page: "/home" });
+    ReactGA.send({ hitType: "pageview", page: "/Inicio" });
 
     // Sentry - Evento de Carga de Página
     Sentry.captureMessage("Home page loaded", "info");
