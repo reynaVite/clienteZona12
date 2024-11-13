@@ -15,11 +15,17 @@ import { getToken, onMessage } from "firebase/messaging";
 import { messaging } from "../firebase"; // Asegúrate de que la ruta sea correcta
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ReactGA from "react-ga4";
 
 
 
 export function Home() {
- 
+  useEffect(() => {
+    // Google Analytics - Evento de Visualización de Página
+    ReactGA.send({ hitType: "pageview", page: "/Inicio" });
+
+  }, []);
+
 
   return (
     <>
