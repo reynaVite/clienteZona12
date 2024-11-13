@@ -36,17 +36,6 @@ export function Home() {
         console.error("Error de autenticación anónima:", error);
       });
 
-    // Obtener el token de Firebase Messaging
-    getToken(messaging, { vapidKey: "YOUR_VAPID_KEY" })
-      .then((token) => {
-        console.log("Token de mensajería obtenido:", token);
-      })
-      .catch((error) => {
-        // Sentry - Error al obtener token de mensajería
-        Sentry.captureException(error);
-        console.error("Error al obtener el token de mensajería:", error);
-      });
-
     // Evento de Desplazamiento (Scroll) en GA
     const handleScroll = () => {
       const scrollPercentage =
@@ -83,7 +72,6 @@ export function Home() {
 
   return (
     <>
-      <CSPMetaTag />
       <Affix>
         <Header />
       </Affix>
