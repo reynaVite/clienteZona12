@@ -6,17 +6,14 @@ import { Footer } from "../components/Footer";
 import { Link } from "react-router-dom";
 import { ScrollToTop } from "../components/ScrollToTop";
 import { Form, Input, Button, Select, message } from "antd";
-import {CheckCircleOutlined, LockOutlined} 
-from "@ant-design/icons";
+import { CheckCircleOutlined, LockOutlined } from "@ant-design/icons";
 import { Subtitulo, Contenido } from "../components/Titulos";
 import ReCAPTCHA from "react-google-recaptcha";
 import { CSPMetaTag } from "../components/CSPMetaTag";
 import imagen from "../img/Si.jpg";
 const { Option } = Select;
- 
-export function Login() {
-  
 
+export function Login() {
   const [form] = Form.useForm();
   const [formValues, setFormValues] = useState({});
   const [buttonBlocked, setButtonBlocked] = useState(false);
@@ -26,7 +23,7 @@ export function Login() {
   const handleFormValuesChange = (changedValues, allValues) => {
     setFormValues(allValues);
   };
- 
+
   const [userRole, setUserRole] = useState(null);
   const onChange = () => {
     console.log("Recapcha");
@@ -40,7 +37,7 @@ export function Login() {
 
   const onFinish = async (values) => {
     setButtonLoading(true);
-  
+
     try {
       const response = await axios.post(
         "https://servidor-zonadoce.vercel.app/login",
@@ -49,22 +46,19 @@ export function Login() {
           contrasena: values.contrasena,
         }
       );
-  
+
       if (response.data.success) {
         console.log("Inicio de sesión exitoso");
         message.success("Inicio de sesión exitoso");
-  
-        // Forzar un error intencional
-        Sentry.captureException(new Error("Error de prueba después de inicio de sesión exitoso"));
-  
+
         // Continuar con el flujo de inicio de sesión exitoso
         localStorage.setItem("userRole", response.data.role);
         localStorage.setItem("userCURP", formValues.curp);
         localStorage.setItem("userPlantel", response.data.plantel);
-  
+
         const userRole = response.data.role;
         setUserRole(userRole);
-  
+
         if (userRole === 1 || userRole === 2 || userRole === 3) {
           navigate("/Inicio");
         } else {
@@ -75,7 +69,7 @@ export function Login() {
         message.error(response.data.message || "Credenciales incorrectas");
         const updatedFailedAttempts = failedAttempts + 1;
         setFailedAttempts(updatedFailedAttempts);
-  
+
         if (updatedFailedAttempts === 3) {
           try {
             message.error("Cuenta bloqueada.");
@@ -98,19 +92,19 @@ export function Login() {
       setButtonLoading(false);
     }
   };
-  
 
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
     message.error("Por favor, completa todos los campos.");
   };
+
   return (
     <>
       <CSPMetaTag />
       <Header />
       <main className="grid lg:grid-cols-12 gap-4 md:grid-cols-12 celular:grid-cols-12">
         <ScrollToTop />
-    
+
         {/* Formulario - Ocupa 5/12 columnas en pantallas grandes y 12/12 en celulares */}
         <div className="lg:col-span-5 mx-10 md:col-span-7 celular:col-span-12">
           <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-center">
@@ -203,7 +197,6 @@ export function Login() {
               ]}
             >
               <ReCAPTCHA
-                //sitekey="6LfPh4UpAAAAADrQnchMkx5WoF9InHXo0jYAt2JC"
                 sitekey="6Lflo2wqAAAAAK-WR8SviHWt7H_7HmpFwhwX25Cg"
                 onChange={onChange}
               />
@@ -245,11 +238,7 @@ export function Login() {
 
         {/* Imagen - Oculta en pantallas pequeñas y se muestra solo en pantallas grandes */}
         <div className="hidden lg:block lg:col-span-7">
-          <img
-            src={imagen}
-            alt=""
-            className="w-full object-cover h-full"
-          />
+          <img src={imagen} alt="" className="w-full object-cover h-full" />
         </div>
       </main>
       <Footer />
