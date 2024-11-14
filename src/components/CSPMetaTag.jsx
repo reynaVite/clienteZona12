@@ -6,12 +6,33 @@ export function CSPMetaTag() {
         meta.httpEquiv = 'Content-Security-Policy';
         meta.content = `
             default-src 'self'; 
-            script-src 'self' https://apis.google.com https://www.gstatic.com https://www.google.com https://cdn.jsdelivr.net https://www.googletagmanager.com; 
-            style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/antd.css; 
-            font-src 'self' https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/fonts/; 
+            script-src 'self' 
+                https://apis.google.com 
+                https://www.gstatic.com 
+                https://www.google.com 
+                https://cdn.jsdelivr.net 
+                https://www.googletagmanager.com 
+                https://o4508289402470400.ingest.sentry.io; 
+            style-src 'self' 'unsafe-inline' 
+                https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/antd.css; 
+            font-src 'self' 
+                https://cdn.jsdelivr.net/npm/antd@5.11.3/dist/fonts/; 
             img-src 'self' *; 
-            connect-src 'self' http://localhost:3000 https://servidor-zonadoce.vercel.app https://identitytoolkit.googleapis.com https://firebaseinstallations.googleapis.com https://firebase.googleapis.com https://fcm.googleapis.com https://fcmregistrations.googleapis.com https://www.google-analytics.com https://run.mocky.io/v3/435e224c-44fb-4773-9faf-380c5e6a2188 https://api.hunter.io https://firebasestorage.googleapis.com https://securetoken.googleapis.com; 
-            frame-src 'self' https://www.google.com https://apis.google.com https://eduzona-ba7dd.firebaseapp.com; 
+            connect-src 'self' 
+                http://localhost:3000 
+                https://servidor-zonadoce.vercel.app 
+                https://identitytoolkit.googleapis.com 
+                https://firebaseinstallations.googleapis.com 
+                https://firebase.googleapis.com 
+                https://fcm.googleapis.com 
+                https://fcmregistrations.googleapis.com 
+                https://www.google-analytics.com 
+                https://firebasestorage.googleapis.com 
+                https://securetoken.googleapis.com 
+                https://o4508289402470400.ingest.sentry.io; 
+            frame-src 'self' 
+                https://www.google.com 
+                https://apis.google.com; 
             form-action 'self';
         `.replace(/\n/g, ' ').trim();
 

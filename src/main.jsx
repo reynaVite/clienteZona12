@@ -68,7 +68,32 @@ const TrackPageView = () => {
 
   return null;
 };
+Sentry.init({
+  dsn: "https://9b1b092223a63ee80741f94321151940@o4508289402470400.ingest.us.sentry.io/4508289404108800", // Reemplaza con tu DSN de Sentry
+  integrations: [
+    Sentry.BrowserTracing(),
+    new Sentry.Replay(), // Para capturar la reproducción de sesiones
+  ],
+  environment: process.env.NODE_ENV === 'production' ? 'production' : 'development', // Define el entorno
+  // Configuración de trazado para producción
+  tracesSampleRate: 0.2, // Reduce el porcentaje de transacciones capturadas (ej. 20%)
+  tracePropagationTargets: ["https://cliente-zona12.vercel.app", /^https:\/\/api\.tu-dominio\.com/], // URLs específicas de producción
+  
+  // Configuración de Session Replay
+  replaysSessionSampleRate: 0.05, // Configura una tasa de muestreo de 5% para sesiones
+  replaysOnErrorSampleRate: 1.0, // Muestra el 100% de las sesiones cuando ocurren errores
 
+  // Otras opciones de configuración
+  beforeSend(event) {
+    // Filtrar o modificar eventos antes de enviarlos a Sentry (opcional)
+    if (event.environment !== 'production') {
+      return null; // Solo registrar errores en producción
+    }
+    return event;
+  },
+});
+
+Sentry.captureException(new Error("Esta es una prueba de error de Sentry"));
 // Componente ScrollToTop
 const ScrollToTop = () => {
   const { pathname } = useLocation();
