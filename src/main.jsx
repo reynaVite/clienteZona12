@@ -92,8 +92,12 @@ Sentry.init({
     return event;
   },
 });
-
-Sentry.captureException(new Error("Esta es una prueba de error de Sentry"));
+useEffect(() => {
+  if (process.env.NODE_ENV === "production") {
+      // Forzar un error para verificar Sentry
+      Sentry.captureException(new Error("Error de prueba para verificar Sentry en producción"));
+  }
+}, []);
 // Componente ScrollToTop
 const ScrollToTop = () => {
   const { pathname } = useLocation();
