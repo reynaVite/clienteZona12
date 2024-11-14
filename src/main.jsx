@@ -77,7 +77,7 @@ Sentry.init({
   environment: process.env.NODE_ENV === 'production' ? 'production' : 'development', // Define el entorno
   // Configuración de trazado para producción
   tracesSampleRate: 0.2, // Reduce el porcentaje de transacciones capturadas (ej. 20%)
-  tracePropagationTargets: ["https://cliente-zona12.vercel.app", /^https:\/\/api\.tu-dominio\.com/], // URLs específicas de producción
+  tracePropagationTargets: ["https://cliente-zona12.vercel.app", /^https:\/\/api\.tu-dominio\.com/],
   
   // Configuración de Session Replay
   replaysSessionSampleRate: 0.05, // Configura una tasa de muestreo de 5% para sesiones
