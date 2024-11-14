@@ -77,7 +77,7 @@ Sentry.init({
   environment: process.env.NODE_ENV === 'production' ? 'production' : 'development', // Define el entorno
   // Configuración de trazado para producción
   tracesSampleRate: 0.2, // Reduce el porcentaje de transacciones capturadas (ej. 20%)
-  tracePropagationTargets: ["https://cliente-zona12.vercel.app", /^https:\/\/api\.tu-dominio\.com/],
+  tracePropagationTargets: ["https://cliente-zona12.vercel.app", /^https:\/\/api\.tu-dominio\.com/], // URLs específicas de producción
   
   // Configuración de Session Replay
   replaysSessionSampleRate: 0.05, // Configura una tasa de muestreo de 5% para sesiones
@@ -92,12 +92,8 @@ Sentry.init({
     return event;
   },
 });
-useEffect(() => {
-  if (process.env.NODE_ENV === "production") {
-      // Forzar un error para verificar Sentry
-      Sentry.captureException(new Error("Error de prueba para verificar Sentry en producción"));
-  }
-}, []);
+
+Sentry.captureException(new Error("Esta es una prueba de error de Sentry"));
 // Componente ScrollToTop
 const ScrollToTop = () => {
   const { pathname } = useLocation();
